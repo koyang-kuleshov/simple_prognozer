@@ -16,7 +16,7 @@ class MainTable(models.Model):
     country_region = models.CharField(verbose_name='Country_region',
                                       max_length=128
                                       )
-    last_update = models.CharField(verbose_name='last_update',
+    last_update = models.CharField(verbose_name='Last_update',
                                    max_length=128
                                    )
     # Широта
@@ -47,6 +47,12 @@ class MainTable(models.Model):
     active = models.PositiveIntegerField(verbose_name='Active',
                                          default=0
                                          )
+    # Формат Khakassia, Republic Russia
+    combined_key = models.CharField(verbose_name='Combined_key',
+                                    max_length=128,
+                                    default='Russia',
+                                    unique=True
+                                    )
     # Заболеваемость
     incidence_rate = models.DecimalField(verbose_name='Incidence_rate',
                                          max_digits=19,
@@ -79,3 +85,20 @@ class MainTable(models.Model):
     region_limit = models.PositiveIntegerField(verbose_name='Region limit',
                                                default=0
                                                )
+
+
+class TimeSeries(models.Model):
+    region = models.ForeignKey(MainTable, on_delete=models.CASCADE)
+    last_update = models.DateTimeField()
+    # Заболевшие
+    confirmed = models.PositiveIntegerField(verbose_name='Confirmed',
+                                            default=0
+                                            )
+    # Смерти
+    deaths = models.PositiveIntegerField(verbose_name='Deaths',
+                                         default=0
+                                         )
+    # Выздоровления
+    recovered = models.PositiveIntegerField(verbose_name='Recovered',
+                                            default=0
+                                            )
