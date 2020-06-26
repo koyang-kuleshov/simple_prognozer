@@ -1,5 +1,5 @@
 """
-WSGI config for simle_prognozer project.
+WSGI config for simple_prognozer project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'simle_prognozer.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'simple_prognozer.settings')
 
 application = get_wsgi_application()
