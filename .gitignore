@@ -62,9 +62,6 @@ db.sqlite3
 db.sqlite3-journal
 secret_key.py
 
-# Migrations
-migrations/
-
 # Flask stuff:
 instance/
 .webassets-cache
