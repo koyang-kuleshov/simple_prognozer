@@ -14,6 +14,7 @@ class Subdivision(models.Model):
                                 )
     subdivision = models.CharField(verbose_name='Province, Region or City',
                                    max_length=128,
+                                   null=True
                                    )
     # FIPS только для US
     fips = models.IntegerField(verbose_name='FIPS US inner number',
@@ -59,44 +60,47 @@ class MainTable(models.Model):
     recovered = models.PositiveIntegerField(verbose_name='Recovered',
                                             )
     # Активные больные
-    active = models.PositiveIntegerField(verbose_name='Active',
-                                         )
+    active = models.IntegerField(verbose_name='Active',
+                                 )
 
     last_update = models.DateTimeField(verbose_name='Last update',
                                        )
 
     # Заболеваемость
     incidence_rate = models.DecimalField(verbose_name='Incidence rate',
-                                         max_digits=19,
+                                         max_digits=25,
                                          decimal_places=16,
-                                         blank=True
+                                         blank=True,
+                                         null=True,
                                          )
     # Соотношение Заболеваемости И Летальности в % на 100 000 человек
     case_fatality_ratio = models. \
         DecimalField(verbose_name='Case fatality ratio',
-                     max_digits=19,
+                     max_digits=25,
                      decimal_places=16,
-                     default=0
+                     default=0,
+                     null=True
                      )
-    testing_rate = models.DecimalField(verbose_name='Testing rate',
-                                       max_digits=19,
-                                       decimal_places=16,
-                                       default=0
-                                       )
-    hospitalization_rate = models. \
-        DecimalField(verbose_name='Hospitalization_rate',
-                     max_digits=19,
-                     decimal_places=16,
-                     default=0
-                     )
-    region_population = models. \
-        PositiveIntegerField(verbose_name='Region population',
-                             default=0
-                             )
-    # 80% от region_population округляем в большую сторону
-    region_limit = models.PositiveIntegerField(verbose_name='Region limit',
-                                               default=0
-                                               )
+
+    # testing_rate = models.DecimalField(verbose_name='Testing rate',
+    #                                    max_digits=25,
+    #                                    decimal_places=16,
+    #                                    default=0
+    #                                    )
+    # hospitalization_rate = models. \
+    #     DecimalField(verbose_name='Hospitalization_rate',
+    #                  max_digits=25,
+    #                  decimal_places=16,
+    #                  default=0
+    #                  )
+    # region_population = models. \
+    #     PositiveIntegerField(verbose_name='Region population',
+    #                          default=0
+    #                          )
+    # # 80% от region_population округляем в большую сторону
+    # region_limit = models.PositiveIntegerField(verbose_name='Region limit',
+    #                                            default=0
+    #                                            )
 
 
 class TimeSeries(models.Model):
