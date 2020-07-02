@@ -10,6 +10,7 @@ from mainapp.models import MainTable, Country, Subdivision
 
 def index(request):
     daily_reports_to_maintable()  # Запись Daily_Reports в таблицу MainTable
+    population_to_maintable()
 
     context = {
 
@@ -40,3 +41,23 @@ def daily_reports_to_maintable():
                              active=row[10], last_update=row[4], incidence_rate=row[12] or None,
                              case_fatality_ratio=row[13] or None)
             main.save()
+
+
+def population_to_maintable():
+    from services.region_population import get_population
+
+    countries_without_subdivisions_list = [
+        Country.objects.values_list('country', flat=True).get(pk=obj.country_id)
+        for obj in Subdivision.objects.order_by('country_id')
+        if Subdivision.objects.filter(country_id=obj.country_id).count() == 1
+    ]
+
+    countries_list = list(Subdivision.objects.values('id', 'subdivision', 'country__country', 'fips')
+                          .order_by('country_id'))
+
+    res = get_population(countries_without_subdivisions_list, countries_list)
+    for res_id in res.keys():
+        population_from_maintable_qs = MainTable.objects.filter(subdivision_id=res_id).values('region_population')
+
+        if population_from_maintable_qs[0]['region_population'] != res[res_id]:
+            population_from_maintable_qs.update(region_population=res[res_id])
