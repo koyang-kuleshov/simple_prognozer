@@ -128,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+/simple_prognozer/services/get_population_error.json

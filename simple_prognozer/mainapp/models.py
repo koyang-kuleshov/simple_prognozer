@@ -93,10 +93,10 @@ class MainTable(models.Model):
     #                  decimal_places=16,
     #                  default=0
     #                  )
-    # region_population = models. \
-    #     PositiveIntegerField(verbose_name='Region population',
-    #                          default=0
-    #                          )
+    region_population = models. \
+        PositiveIntegerField(verbose_name='Region population',
+                             default=0
+                             )
     # # 80% от region_population округляем в большую сторону
     # region_limit = models.PositiveIntegerField(verbose_name='Region limit',
     #                                            default=0
