@@ -3,3 +3,5 @@ Django==3.0.7
 pkg-resources==0.0.0
 pytz==2020.1
 sqlparse==0.3.1
+pandas==1.0.5
+PyGithub==1.51
