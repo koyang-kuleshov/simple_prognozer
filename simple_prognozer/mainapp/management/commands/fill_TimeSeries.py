@@ -1,14 +1,17 @@
 import pandas as pd
 from github.MainClass import Github
 
+from django.utils import timezone
 from django.core.management.base import BaseCommand
+
 from mainapp.models import TimeSeries, Country, Subdivision
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         # настройки для подклбчения к github
-        token = '952d6b2c5667ad09b38d798a3f98bf27289de9f6'
+
+        token = ''
         repo_path = 'CSSEGISandData/COVID-19'
         dr_repo_file_list = 'csse_covid_19_data/csse_covid_19_daily_reports'
 
@@ -49,7 +52,6 @@ class Command(BaseCommand):
             # вставляем отчет в общий дата фрейм
             df_result = pd.concat([df_result, df])
 
-        # df_result = pd.read_csv('converted.csv')
         # исправляем разные названия одной страны
         df_result.loc[df_result['Country_Region'] == \
                       'Mainland China', 'Country_Region'] = 'China'
@@ -78,6 +80,7 @@ class Command(BaseCommand):
         df_result['Last_Update'] = pd.to_datetime(df_result['Last_Update'])
         df_result['Last_Update'] = df_result['Last_Update'].apply(
             lambda x: x.date())
+        df_result['Last_Update'] = pd.to_datetime(df_result['Last_Update'])
 
         # удаляем дубликаты для US
         df_result = df_result.drop_duplicates(subset=['FIPS',
@@ -92,14 +95,20 @@ class Command(BaseCommand):
             ['Last_Update', 'Country_Region', 'Province_State'],
             as_index=False)[['Confirmed', 'Deaths', 'Recovered']].sum()
 
+        # получаем текущую зону для добавления к дате, что бы иключить ошибку
+        current_tz = timezone.get_current_timezone()
+
+        # итерируем датафрейм и создаем новуые записи в таблице TimeSeries
         for index, row in df_by_country.iterrows():
-            country = Country.objects.get_or_create(country=row['Country_Region'])
-            subdivision = Subdivision.objects.get_or_create(
+            country, _ = Country.objects.get_or_create(
+                country=row['Country_Region'])
+            subdivision, _ = Subdivision.objects.get_or_create(
                 country=country,
-                subdivision=row['Country_Region'])
+                subdivision=row['Province_State'])
             seria = TimeSeries(country=country,
                                subdivision=subdivision,
-                               last_update=row['Last_Update'],
+                               last_update=current_tz.localize(
+                                   row['Last_Update']),
                                confirmed=row['Confirmed'],
                                deaths=row['Deaths'],
                                recovered=row['Recovered']
