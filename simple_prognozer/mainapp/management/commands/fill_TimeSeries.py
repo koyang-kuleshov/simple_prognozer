@@ -9,8 +9,7 @@ from mainapp.models import TimeSeries, Country, Subdivision
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # настройки для подклбчения к github
-
+        # настройки для подключения к github
         token = ''
         repo_path = 'CSSEGISandData/COVID-19'
         dr_repo_file_list = 'csse_covid_19_data/csse_covid_19_daily_reports'
@@ -37,7 +36,7 @@ class Command(BaseCommand):
 
         # перебираем отчеты по одному
         for report in daily_reports_file_list:
-            # загружаем отчет в дата фрейм
+            # загружаем отчет в датафрейм
             df = pd.read_csv(report.download_url)
 
             # исправляем разночтения в названиях столбцов
@@ -98,21 +97,21 @@ class Command(BaseCommand):
         # получаем текущую зону для добавления к дате, что бы иключить ошибку
         current_tz = timezone.get_current_timezone()
 
-        # итерируем датафрейм и создаем новуые записи в таблице TimeSeries
-        for index, row in df_by_country.iterrows():
-            country, _ = Country.objects.get_or_create(
-                country=row['Country_Region'])
-            subdivision, _ = Subdivision.objects.get_or_create(
-                country=country,
-                subdivision=row['Province_State'])
-            seria = TimeSeries(country=country,
-                               subdivision=subdivision,
-                               last_update=current_tz.localize(
-                                   row['Last_Update']),
-                               confirmed=row['Confirmed'],
-                               deaths=row['Deaths'],
-                               recovered=row['Recovered']
-                               )
-            seria.save()
+        # переводим датафрейм в словарь
+        df_records = df_by_country.to_dict('records')
 
+        # создаем список объектов для записи в бд
+        model_instances = [TimeSeries(
+            country=Country.objects.get_or_create(
+                country=record['Country_Region'])[0],
+            subdivision=Subdivision.objects.get_or_create(
+                country=Country.objects.get(country=record['Country_Region']),
+                subdivision=record['Province_State'])[0],
+            last_update=current_tz.localize(record['Last_Update']),
+            confirmed=record['Confirmed'],
+            deaths=record['Deaths'],
+            recovered=record['Recovered'],
+        ) for record in df_records]
 
+        # записываем данные в таблицу
+        TimeSeries.objects.bulk_create(model_instances)
