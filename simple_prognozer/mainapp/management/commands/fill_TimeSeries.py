@@ -96,12 +96,16 @@ class Command(BaseCommand):
 
         df_records = df_by_country.to_dict('records')
         # print(df_records)
+
         model_instances = [TimeSeries(
-            country=Country.objects.get_or_create(record['Country_Region']),
-            subdivision=Subdivision.objects.get(record['Province_State']),
+            country=Country.objects.get_or_create(country=record['Country_Region']),
+            subdivision=Subdivision.objects.get_or_create(
+                country=Country.objects.get(country=record['Country_Region']),
+                subdivision=(record['Province_State'])),
             last_update=record['Last_Update'],
             confirmed=record['Confirmed'],
             deaths=record['Deaths'],
             recovered=record['Recovered']
         ) for record in df_records]
         TimeSeries.objects.bulk_create(model_instances)
+
