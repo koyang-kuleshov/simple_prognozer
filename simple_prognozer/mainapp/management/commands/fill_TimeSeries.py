@@ -7,7 +7,6 @@ from mainapp.models import TimeSeries, Country, Subdivision
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        '''
         # настройки для подклбчения к github
         token = '952d6b2c5667ad09b38d798a3f98bf27289de9f6'
         repo_path = 'CSSEGISandData/COVID-19'
@@ -49,8 +48,8 @@ class Command(BaseCommand):
 
             # вставляем отчет в общий дата фрейм
             df_result = pd.concat([df_result, df])
-        '''
-        df_result = pd.read_csv('converted.csv')
+
+        # df_result = pd.read_csv('converted.csv')
         # исправляем разные названия одной страны
         df_result.loc[df_result['Country_Region'] == \
                       'Mainland China', 'Country_Region'] = 'China'
@@ -92,20 +91,19 @@ class Command(BaseCommand):
         df_by_country = df_result.groupby(
             ['Last_Update', 'Country_Region', 'Province_State'],
             as_index=False)[['Confirmed', 'Deaths', 'Recovered']].sum()
-        # print(df_by_country)
 
-        df_records = df_by_country.to_dict('records')
-        # print(df_records)
+        for index, row in df_by_country.iterrows():
+            country = Country.objects.get_or_create(country=row['Country_Region'])
+            subdivision = Subdivision.objects.get_or_create(
+                country=country,
+                subdivision=row['Country_Region'])
+            seria = TimeSeries(country=country,
+                               subdivision=subdivision,
+                               last_update=row['Last_Update'],
+                               confirmed=row['Confirmed'],
+                               deaths=row['Deaths'],
+                               recovered=row['Recovered']
+                               )
+            seria.save()
 
-        model_instances = [TimeSeries(
-            country=Country.objects.get_or_create(country=record['Country_Region']),
-            subdivision=Subdivision.objects.get_or_create(
-                country=Country.objects.get(country=record['Country_Region']),
-                subdivision=(record['Province_State'])),
-            last_update=record['Last_Update'],
-            confirmed=record['Confirmed'],
-            deaths=record['Deaths'],
-            recovered=record['Recovered']
-        ) for record in df_records]
-        TimeSeries.objects.bulk_create(model_instances)
 
