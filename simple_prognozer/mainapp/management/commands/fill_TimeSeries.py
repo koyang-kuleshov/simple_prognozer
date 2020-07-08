@@ -10,7 +10,7 @@ from mainapp.models import TimeSeries, Country, Subdivision
 class Command(BaseCommand):
     def handle(self, *args, **options):
         # настройки для подключения к github
-        token = ''
+        token = '2c67b8917aa76671447a6782d81e29e5c94fe0a5'
         repo_path = 'CSSEGISandData/COVID-19'
         dr_repo_file_list = 'csse_covid_19_data/csse_covid_19_daily_reports'
 
@@ -91,7 +91,7 @@ class Command(BaseCommand):
 
         # групируем фрейм, оставляя только страны и регионы
         df_by_country = df_result.groupby(
-            ['Last_Update', 'Country_Region', 'Province_State'],
+            ['Last_Update', 'Country_Region', 'Province_State', 'Admin2', 'FIPS', 'Lat', 'Long_'],
             as_index=False)[['Confirmed', 'Deaths', 'Recovered']].sum()
 
         # получаем текущую зону для добавления к дате, что бы иключить ошибку
@@ -101,17 +101,29 @@ class Command(BaseCommand):
         df_records = df_by_country.to_dict('records')
 
         # создаем список объектов для записи в бд
-        model_instances = [TimeSeries(
-            country=Country.objects.get_or_create(
-                country=record['Country_Region'])[0],
-            subdivision=Subdivision.objects.get_or_create(
-                country=Country.objects.get(country=record['Country_Region']),
-                subdivision=record['Province_State'])[0],
-            last_update=current_tz.localize(record['Last_Update']),
-            confirmed=record['Confirmed'],
-            deaths=record['Deaths'],
-            recovered=record['Recovered'],
-        ) for record in df_records]
+
+        print('Filling TimeSeries...')
+
+        for record in df_records:
+            if Country.objects.filter(country=record['Country_Region']).exists():
+                country = Country.objects.get(country=record['Country_Region'])
+            else:
+                country = Country(country=record['Country_Region'])
+                country.save()
+
+            subdivision, _ = Subdivision.objects.update_or_create(country=country,
+                                                                  subdivision=record['Province_State'],
+                                                                  admin2=record['Admin2'] or None,
+                                                                  fips=int(record['FIPS']) or None,
+                                                                  )
+
+            time_series, _ = TimeSeries.objects.update_or_create(country=country,
+                                                                 subdivision=subdivision,
+                                                                 last_update=record['Last_Update'],
+                                                                 confirmed=record['Confirmed'],
+                                                                 deaths=record['Deaths'],
+                                                                 recovered=record['Recovered'])
+
+        print('TimeSeries fill done!')
 
         # записываем данные в таблицу
-        TimeSeries.objects.bulk_create(model_instances)
