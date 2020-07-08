@@ -62,9 +62,6 @@ db.sqlite3
 db.sqlite3-journal
 secret_key.py
 
-# Migrations
-migrations/
-
 # Flask stuff:
 instance/
 .webassets-cache
@@ -131,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+/simple_prognozer/services/get_population_error.json
