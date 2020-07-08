@@ -16,6 +16,10 @@ class Subdivision(models.Model):
                                    max_length=128,
                                    null=True
                                    )
+    # Альтернативное название страны/региона для поиска кол-ва населения
+    alias_for_population = models.CharField(verbose_name='Alias',
+                                            max_length=128,
+                                            )
     # FIPS только для US
     fips = models.IntegerField(verbose_name='FIPS US inner number',
                                null=True

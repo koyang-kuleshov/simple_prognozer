@@ -1,15 +1,15 @@
 from django.shortcuts import render
 import csv
 from services import parse
+from services.region_population import get_population
 
 from mainapp.models import MainTable, Country, Subdivision
-
 
 # Create your views here.
 
 
 def index(request):
-    daily_reports_to_maintable()  # Запись Daily_Reports в таблицу MainTable
+    # daily_reports_to_maintable()  # Запись Daily_Reports в таблицу MainTable
     population_to_maintable()
 
     context = {
@@ -38,13 +38,12 @@ def daily_reports_to_maintable():
             subdivision.save()
             main = MainTable(country=country, subdivision=subdivision, confirmed=row[7], deaths=row[8],
                              recovered=row[9],
-                             active=row[10], last_update=row[4], incidence_rate=row[12] or None,
+                             active=row[10] or 0, last_update=row[4], incidence_rate=row[12] or None,
                              case_fatality_ratio=row[13] or None)
             main.save()
 
 
 def population_to_maintable():
-    from services.region_population import get_population
 
     countries_without_subdivisions_list = [
         Country.objects.values_list('country', flat=True).get(pk=obj.country_id)
