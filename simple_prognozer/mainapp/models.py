@@ -61,6 +61,7 @@ class MainTable(models.Model):
                                             )
     # Активные больные
     active = models.IntegerField(verbose_name='Active',
+                                 null=True,
                                  )
 
     last_update = models.DateTimeField(verbose_name='Last update',

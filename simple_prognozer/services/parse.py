@@ -1,12 +1,6 @@
 from github.MainClass import Github
+import csv
 import requests
-
-GIT_TOKEN = '9ac1fcab6da1407b3d6d5a687f4093de0f79d422'
-REPOSITORY_PATH = 'CSSEGISandData/COVID-19'
-
-DAILY_REPORTS_FILE_LIST = 'csse_covid_19_data/csse_covid_19_daily_reports'
-
-TIME_SERIES_FILE_LIST = 'csse_covid_19_data/csse_covid_19_time_series'
 
 
 def get_csv(file_name):
