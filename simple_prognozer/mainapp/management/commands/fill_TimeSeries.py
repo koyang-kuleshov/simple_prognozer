@@ -89,9 +89,9 @@ class Command(BaseCommand):
                                                       'Last_Update'],
                                               keep=False)
 
-        # групируем фрейм, оставляя только страны и регионы
         df_by_country = df_result.groupby(
-            ['Last_Update', 'Country_Region', 'Province_State', 'Admin2', 'FIPS', 'Lat', 'Long_'],
+            ['Last_Update', 'Country_Region', 'Province_State', 'Admin2',
+             'FIPS', 'Lat', 'Long_'],
             as_index=False)[['Confirmed', 'Deaths', 'Recovered']].sum()
 
         # получаем текущую зону для добавления к дате, что бы иключить ошибку
@@ -104,26 +104,23 @@ class Command(BaseCommand):
 
         print('Filling TimeSeries...')
 
-        for record in df_records:
-            if Country.objects.filter(country=record['Country_Region']).exists():
-                country = Country.objects.get(country=record['Country_Region'])
-            else:
-                country = Country(country=record['Country_Region'])
-                country.save()
-
-            subdivision, _ = Subdivision.objects.update_or_create(country=country,
-                                                                  subdivision=record['Province_State'],
-                                                                  admin2=record['Admin2'] or None,
-                                                                  fips=int(record['FIPS']) or None,
-                                                                  )
-
-            time_series, _ = TimeSeries.objects.update_or_create(country=country,
-                                                                 subdivision=subdivision,
-                                                                 last_update=record['Last_Update'],
-                                                                 confirmed=record['Confirmed'],
-                                                                 deaths=record['Deaths'],
-                                                                 recovered=record['Recovered'])
-
-        print('TimeSeries fill done!')
+        model_instances = [TimeSeries(
+            country=Country.objects.get(
+                country=record['Country_Region']),
+            subdivision=Subdivision.objects.get_or_create(
+                country=Country.objects.get(
+                    country=record['Country_Region']),
+                    subdivision=record['Province_State'],
+                    fips=record['FIPS'],
+                    admin2=record['Admin2']
+                )[0],
+            last_update=current_tz.localize(record['Last_Update']),
+            confirmed=record['Confirmed'],
+            deaths=record['Deaths'],
+            recovered=record['Recovered'],
+        ) for record in df_records]
 
         # записываем данные в таблицу
+        TimeSeries.objects.bulk_create(model_instances)
+
+        print('TimeSeries fill done!')
