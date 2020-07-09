@@ -10,7 +10,7 @@ from mainapp.models import TimeSeries, Country, Subdivision
 class Command(BaseCommand):
     def handle(self, *args, **options):
         # настройки для подключения к github
-        token = '2c67b8917aa76671447a6782d81e29e5c94fe0a5'
+        token = 'f8e28bf95d4541ad8a41b79e0745965399dfc6f8'
         repo_path = 'CSSEGISandData/COVID-19'
         dr_repo_file_list = 'csse_covid_19_data/csse_covid_19_daily_reports'
 
