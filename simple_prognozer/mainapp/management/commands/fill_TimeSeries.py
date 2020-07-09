@@ -89,9 +89,9 @@ class Command(BaseCommand):
                                                       'Last_Update'],
                                               keep=False)
 
-        # групируем фрейм, оставляя только страны и регионы
         df_by_country = df_result.groupby(
-            ['Last_Update', 'Country_Region', 'Province_State'],
+            ['Last_Update', 'Country_Region', 'Province_State', 'Admin2',
+             'FIPS', 'Lat', 'Long_'],
             as_index=False)[['Confirmed', 'Deaths', 'Recovered']].sum()
 
         # получаем текущую зону для добавления к дате, что бы иключить ошибку
@@ -101,12 +101,19 @@ class Command(BaseCommand):
         df_records = df_by_country.to_dict('records')
 
         # создаем список объектов для записи в бд
+
+        print('Filling TimeSeries...')
+
         model_instances = [TimeSeries(
-            country=Country.objects.get_or_create(
-                country=record['Country_Region'])[0],
+            country=Country.objects.get(
+                country=record['Country_Region']),
             subdivision=Subdivision.objects.get_or_create(
-                country=Country.objects.get(country=record['Country_Region']),
-                subdivision=record['Province_State'])[0],
+                country=Country.objects.get(
+                    country=record['Country_Region']),
+                    subdivision=record['Province_State'],
+                    fips=record['FIPS'],
+                    admin2=record['Admin2']
+                )[0],
             last_update=current_tz.localize(record['Last_Update']),
             confirmed=record['Confirmed'],
             deaths=record['Deaths'],
@@ -115,3 +122,5 @@ class Command(BaseCommand):
 
         # записываем данные в таблицу
         TimeSeries.objects.bulk_create(model_instances)
+
+        print('TimeSeries fill done!')
