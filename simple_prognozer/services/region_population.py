@@ -2,9 +2,8 @@ import json
 import os
 import re
 
-import requests
 import pandas as pd
-
+import requests
 from bs4 import BeautifulSoup
 
 REGION_POPULATION_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -12,7 +11,7 @@ REGION_POPULATION_PATH = os.path.abspath(os.path.dirname(__file__))
 SINGLE_COUNTRIES_POP_DATA_URL = "https://worldpopulationreview.com/countries"
 KOSOVO_POPULATION_POP_DATA_URL = "https://countrymeters.info/en/Kosovo"
 US_CITIES_POP_DATA_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/' \
-                     'csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv'
+                         'csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv'
 ITALY_POPULATION_POP_DATA_URL = 'https://en.wikipedia.org/wiki/Regions_of_Italy'
 TRENTO_BOLZANO_POP_DATA_URL = 'http://www.citypopulation.de/en/italy/admin/04__trentino_alto_adige/'
 BRAZIL_POP_DATA_URL = 'https://en.wikipedia.org/wiki/States_of_Brazil'
@@ -28,96 +27,51 @@ CN_POP_DATA_URL = 'http://www.citypopulation.de/en/china/cities/'
 CL_POP_DATA_URL = 'https://www.citypopulation.de/en/chile/cities/'
 
 
-def get_population(countries_without_subdivisions_list, countries_list):
-    countries_with_subdivisions_list = [country for country in countries_list
-                                        if country['country__country'] not in countries_without_subdivisions_list]
-    countries_without_subdivisions_list = [country for country in countries_list
-                                           if country['country__country'] in countries_without_subdivisions_list]
-    single_countries_population = single_countries_parser()
-    region_population_us_cities = region_population_us_cities_parser()
-    region_population = region_population_parser()
+def get_population(country):
+    countries_pop_data_url = {
+        "countries_without_subdivisions": single_countries_pop(),
+        "US": us_pop(),
+        "Italy": italy_pop(),
+        "Brazil": table_data_parser(BRAZIL_POP_DATA_URL, 'wikitable', 1, 1, 0, 4),
+        "Russia": table_data_parser(RU_POP_DATA_URL, 'wikitable', 1, 1, 1, 2),
+        "Mexico": table_data_parser(MX_POP_DATA_URL, 'wikitable', 1, 1, 1, 2),
+        "Japan": table_data_parser(JP_POP_DATA_URL, 'data', 1, 1, 1, 12),
+        "Canada": table_data_parser(CA_POP_DATA_URL, 'wikitable', 2, 1, 1, 9),
+        "Colombia": table_data_parser(CO_POP_DATA_URL, 'data', 1, 1, 1, 10),
+        "Peru": table_data_parser(PE_POP_DATA_URL, 'data', 1, 1, 1, 10),
+        "Spain": table_data_parser(ES_POP_DATA_URL, 'data', 1, 1, 1, 10),
+        "India": table_data_parser(IN_POP_DATA_URL, 'wikitable', 1, 1, 1, 2),
+        "United Kingdom": uk_pop(),
+        "China": china_pop(),
+        "Chile": chili_pop(),
+        "Netherlands": netherlands_pop(),
+        "Australia": table_data_parser('http://www.citypopulation.de/en/australia/cities/uc/',
+                                       'data', 1, 1, 1, 10),
+        "Pakistan": table_data_parser('https://en.wikipedia.org/wiki/Administrative_units_of_Pakistan',
+                                      'wikitable', 1, 1, 0, 9),
+        "Germany": table_data_parser('http://www.citypopulation.de/en/germany/cities/',
+                                     'data', 1, 1, 1, 10),
+        "Sweden": table_data_parser('http://www.citypopulation.de/en/sweden/cities/mun/',
+                                    'data', 1, 1, 1, 9),
+        "Ukraine": ukraine_pop(),
+        "Denmark": denmark_pop(),
+        "France": france_pop()
 
-    res = {}
-    get_population_error = {}
-    # {'id': 1, 'subdivision': 'South Carolina', 'country__country': 'US', 'fips': 45001}
-    # {'id': 3787, 'subdivision': None, 'country__country': 'Yemen', 'fips': None}
-    for country in countries_without_subdivisions_list:
-        if country['country__country'] in single_countries_population.keys():
-            res.update({country['id']: single_countries_population[country['country__country']]})
-        else:
-            get_population_error.update({country['country__country']: "not found in single_countries_parser"})
+    }
 
-    for country in countries_with_subdivisions_list:
-
-        if country['fips']:
-
-            if country['fips'] in region_population_us_cities.keys():
-                res.update({country['id']: region_population_us_cities[country['fips']]})
-            else:
-                get_population_error.update({
-                    country['country__country']: {
-                        "status": "not found in time_series_covid19_deaths_US.csv",
-                        "subdivision": country['subdivision'],
-                        "fips": country['fips']
-                    }
-                })
-        # Hong Kong, Macau
-        elif country['subdivision'] in single_countries_population.keys():
-            res.update({country['id']: single_countries_population[country['country__country']]})
-
-        else:
-
-            if country['subdivision'] in region_population.keys():
-                res.update({country['id']: region_population[country['subdivision']]})
-            else:
-
-                if country['country__country'] in get_population_error.keys():
-                    get_population_error[country['country__country']]['subdivisions']\
-                        .update({country['subdivision']: country['subdivision']})
-                else:
-                    get_population_error.update({
-                        country['country__country']: {
-                            "status": "not found",
-                            "subdivisions": {country['subdivision']: country['subdivision']},
-                            "fips": country['fips']
-                        }
-                    })
-
-    with open(os.path.join(REGION_POPULATION_PATH, 'get_population_error.json'),
-              'w', encoding='utf-8') as f:
-        json.dump(get_population_error, f, ensure_ascii=False, indent=4)
-
-    return res
+    return countries_pop_data_url[country]
 
 
-def region_population_us_cities_parser():
-    url = US_CITIES_POP_DATA_URL
-    df = pd.read_csv(url, error_bad_lines=False)
-
-    fips = df['FIPS']
-    population = df['Population']
-
-    country_population = {}
-    for i in range(len(fips)):
-        if fips[i] in country_population.keys():
-            country_population.update({(fips[i]): country_population[fips[i]] + population[i]})
-            break
-        else:
-            country_population.update({fips[i]: population[i]})
-
-    return country_population
-
-
-def data_parser(url, soup_class, start_slice, num_country, num_pop, country_population):
-    url = url
+def table_data_parser(url, soup_class, start_slice, end_slice, num_country, num_pop):
     res = requests.get(url).text
     soup = BeautifulSoup(res, features="html.parser")
+    country_population = {}
     regex = r'^(?:(\d+(?:\,))+\d+|\d+$)'
 
     with open(os.path.join(REGION_POPULATION_PATH, 'countries_aliases.json'), encoding='utf-8') as json_file:
         countries_aliases = json.load(json_file)
 
-    for items in soup.find('table', class_=soup_class).find_all('tr')[start_slice::1]:
+    for items in soup.find('table', class_=soup_class).find_all('tr')[start_slice::end_slice]:
         data = items.find_all(['th', 'td'])
 
         try:
@@ -134,78 +88,17 @@ def data_parser(url, soup_class, start_slice, num_country, num_pop, country_popu
     return country_population
 
 
-def region_population_parser():
-    url = ITALY_POPULATION_POP_DATA_URL
+def int_data_parser(url, soup_teg, soup_class):
     res = requests.get(url).text
     soup = BeautifulSoup(res, features="html.parser")
+    regex = r'^(?:(\d+(?:\,))+\d+|\d+$)'
 
-    with open(os.path.join(REGION_POPULATION_PATH, 'countries_aliases.json')) as json_file:
-        countries_aliases = json.load(json_file)
+    res = int(re.search(regex, soup.find(soup_teg, class_=soup_class).text).group(0).replace(',', ''))
 
-    country_population = {}
-    for items in soup.find('table', class_='wikitable').find_all('tr')[2::1]:
-        data = items.find_all(['th', 'td'])
-
-        try:
-            country = data[1].a.text
-            # Если название на странице отличается от csv, используем алиас
-            # TODO take alias from mainapp_country (if table don't rewrite)
-            if country in countries_aliases.keys():
-                country = countries_aliases[country]
-            population = int(data[3].text.replace(',', ''))
-            country_population.update({country: population})
-        except AttributeError:
-            pass
-
-    country_population = data_parser(TRENTO_BOLZANO_POP_DATA_URL, 'data', 2, 0, 2, country_population)
-
-    country_population = data_parser(BRAZIL_POP_DATA_URL, 'wikitable', 1, 0, 4,  country_population)
-
-    country_population = data_parser(RU_POP_DATA_URL, 'wikitable', 1, 1, 2, country_population)
-
-    country_population = data_parser(MX_POP_DATA_URL, 'wikitable', 1, 1, 2, country_population)
-
-    country_population = data_parser(JP_POP_DATA_URL, 'data', 1, 1, 12, country_population)
-
-    country_population = data_parser(CA_POP_DATA_URL, 'wikitable', 2, 1, 9, country_population)
-
-    country_population = data_parser(CO_POP_DATA_URL, 'data', 1, 1, 10, country_population)
-
-    country_population = data_parser(PE_POP_DATA_URL, 'data', 1, 1, 10, country_population)
-
-    country_population = data_parser(ES_POP_DATA_URL, 'data', 1, 1, 10, country_population)
-
-    country_population = data_parser(IN_POP_DATA_URL, 'wikitable', 1, 1, 2, country_population)
-
-    country_population = data_parser(CN_POP_DATA_URL, 'data', 1, 1, 11, country_population)
-
-    country_population = data_parser(CL_POP_DATA_URL, 'data', 1, 1, 9, country_population)
-
-    # region Nuble for Chile
-    if 'Nuble' not in country_population.keys():
-        url = 'https://www.citypopulation.de/en/chile/admin/'
-        res = requests.get(url).text
-        soup = BeautifulSoup(res, features="html.parser")
-
-        for items in soup.find('table', class_='data').find_all('tr')[1::1]:
-            data = items.find_all(['th', 'td'])
-            country = data[0].a.text
-            if country == 'Ñuble':
-                population = int(data[6].text.replace(',', ''))
-                country_population.update({"Nuble": population})
-                break
-
-        country_population['Biobio'] -= country_population['Nuble']
-
-    # Netherlands
-    print(single_countries_parser()['Netherlands'])
-    country_population.update({"Netherlands": population})
+    return res
 
 
-    return country_population
-
-
-def single_countries_parser():
+def single_countries_pop():
     url = SINGLE_COUNTRIES_POP_DATA_URL
     res = requests.get(url).text
     soup = BeautifulSoup(res, features="html.parser")
@@ -238,7 +131,143 @@ def single_countries_parser():
     return country_population
 
 
+def us_pop():
+    url = US_CITIES_POP_DATA_URL
+    df = pd.read_csv(url, error_bad_lines=False)
+
+    fips = df['FIPS']
+    population = df['Population']
+
+    country_population = {}
+    for i in range(len(fips)):
+        if fips[i] in country_population.keys():
+            country_population.update({(fips[i]): country_population[fips[i]] + population[i]})
+            break
+        else:
+            country_population.update({fips[i]: population[i]})
+
+    return country_population
+
+
+def italy_pop():
+    country_population = table_data_parser(ITALY_POPULATION_POP_DATA_URL, 'wikitable', 2, 1, 1, 3)
+    country_population_trento_bolzano = table_data_parser(TRENTO_BOLZANO_POP_DATA_URL, 'data', 2, 1, 0, 2)
+    country_population.update(country_population_trento_bolzano)
+
+    return country_population
+
+
+def uk_pop():
+    country_population = table_data_parser(
+        'https://en.wikipedia.org/wiki/Countries_of_the_United_Kingdom_by_population',
+        'wikitable', 1, 1, 1, 2
+    )
+    country_population.update(
+        table_data_parser(
+            'https://en.wikipedia.org/wiki/Regions_of_England',
+            'wikitable', 1, 1, 0, 1
+        )
+    )
+    country_population.update({
+        "Anguilla": single_countries_pop()['Anguilla'],
+        "Bermuda": single_countries_pop()['Bermuda'],
+        "British Virgin Islands": single_countries_pop()['British Virgin Islands'],
+
+        "Cayman Islands": single_countries_pop()['Cayman Islands'],
+        "Falkland Islands (Malvinas)": single_countries_pop()['Falkland Islands (Malvinas)'],
+        "Gibraltar": single_countries_pop()['Gibraltar'],
+        "Isle of Man": single_countries_pop()['Isle of Man'],
+        "Montserrat": single_countries_pop()['Montserrat'],
+        "Turks and Caicos Islands": single_countries_pop()['Turks and Caicos Islands']
+    })
+
+    return country_population
+
+
+def china_pop():
+    country_population = table_data_parser(CN_POP_DATA_URL, 'data', 1, 1, 1, 11)
+    country_population.update({
+        "Hong Kong": single_countries_pop()['Hong Kong'],
+        "Macau": single_countries_pop()['Macau']
+    })
+
+    return country_population
+
+
+def chili_pop():
+    country_population = table_data_parser(CL_POP_DATA_URL, 'data', 1, 1, 1, 9)
+
+    # region Nuble for Chile
+    if 'Nuble' not in country_population.keys():
+        url = 'https://www.citypopulation.de/en/chile/admin/'
+        res = requests.get(url).text
+        soup = BeautifulSoup(res, features="html.parser")
+
+        for items in soup.find('table', class_='data').find_all('tr')[1::1]:
+            data = items.find_all(['th', 'td'])
+            country = data[0].a.text
+            if country == 'Ñuble':
+                population = int(data[6].text.replace(',', ''))
+                country_population.update({"Nuble": population})
+                break
+
+        country_population['Biobio'] -= country_population['Nuble']
+
+    return country_population
+
+
+def netherlands_pop():
+    country_population = {
+        "Aruba": single_countries_pop()['Aruba'],
+        "Bonaire, Sint Eustatius and Saba": sum(
+            table_data_parser(
+                'http://www.citypopulation.de/en/caribbeannetherlands/',
+                'data', 1, 1, 1, 10).values()
+
+        ),
+        "Curacao": single_countries_pop()['Curacao'],
+        "Sint Maarten": single_countries_pop()['Sint Maarten'],
+        "null": single_countries_pop()['Netherlands']
+
+    }
+
+    return country_population
+
+
+def ukraine_pop():
+    country_population = table_data_parser(
+        'https://en.wikipedia.org/wiki/List_of_Ukrainian_oblasts_and_territories_by_population',
+        'wikitable', 1, 1, 1, 2)
+    country_population.update({
+        "Sevastopol": int_data_parser('https://populationstat.com/ukraine/sevastopol', 'div', 'main-clock')
+    })
+
+    return country_population
+
+
+def denmark_pop():
+    country_population = {
+        "Faroe Islands": single_countries_pop()['Faroe Islands'],
+        "Greenland": single_countries_pop()['Greenland'],
+        "null": single_countries_pop()['Denmark']
+    }
+
+    return country_population
+
+
+def france_pop():
+    country_population = table_data_parser(
+        'https://en.wikipedia.org/wiki/Ranked_list_of_French_regions',
+        'wikitable', 1, 1, 1, 2)
+
+    country_population.update({
+        "French Polynesia": single_countries_pop()['French Polynesia']
+    })
+
+    return country_population
+
+
 if __name__ == '__main__':
-    # single_countries_parser()
+    # single_countries_pop()
     # regions_json_updater()
-    region_population_us_cities_parser()
+    print(ukraine_pop())

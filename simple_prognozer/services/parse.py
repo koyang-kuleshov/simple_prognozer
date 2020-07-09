@@ -1,7 +1,7 @@
 from github.MainClass import Github
 import requests
 
-GIT_TOKEN = '9ac1fcab6da1407b3d6d5a687f4093de0f79d422'
+GIT_TOKEN = '952d6b2c5667ad09b38d798a3f98bf27289de9f6'
 REPOSITORY_PATH = 'CSSEGISandData/COVID-19'
 
 DAILY_REPORTS_FILE_LIST = 'csse_covid_19_data/csse_covid_19_daily_reports'
@@ -10,7 +10,7 @@ TIME_SERIES_FILE_LIST = 'csse_covid_19_data/csse_covid_19_time_series'
 
 
 def get_csv(file_name):
-    token = ''  # GitHub TOKEN
+    token = '2c67b8917aa76671447a6782d81e29e5c94fe0a5'  # GitHub TOKEN
 
     repo_path = 'CSSEGISandData/COVID-19'
     daily_reports_dir_path = 'https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_daily_reports/'

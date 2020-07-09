@@ -1,9 +1,14 @@
+import json
+import os
+
+from django.db.models import Count
 from django.shortcuts import render
 import csv
 from services import parse
-from services.region_population import get_population
+from services.region_population import get_population, REGION_POPULATION_PATH
 
 from mainapp.models import MainTable, Country, Subdivision
+
 
 # Create your views here.
 
@@ -44,19 +49,48 @@ def daily_reports_to_maintable():
 
 
 def population_to_maintable():
+    countries_without_subdivisions = {"countries_without_subdivisions": {
+        country[list(country)[1]]: country[list(country)[0]]
+        for country in
+        (Subdivision.objects.select_related()
+            .values('country', 'country__country')
+            .annotate(Count('country_id'))
+            .order_by('country_id')
+            .filter(country_id__count=1))
+    }}
 
-    countries_without_subdivisions_list = [
-        Country.objects.values_list('country', flat=True).get(pk=obj.country_id)
-        for obj in Subdivision.objects.order_by('country_id')
-        if Subdivision.objects.filter(country_id=obj.country_id).count() == 1
-    ]
+    us_subdivisions = {
+        "US": {
+            sub[list(sub)[0]]: sub[list(sub)[1]]
+            for sub in Subdivision.objects.values('fips', 'id').order_by('fips').filter(country_id=1)
+        }
+    }
 
-    countries_list = list(Subdivision.objects.values('id', 'subdivision', 'country__country', 'fips')
-                          .order_by('country_id'))
+    countries_with_subdivisions_exclude_us = Subdivision.objects.select_related() \
+        .values('country', 'country__country') \
+        .annotate(Count('country_id')) \
+        .order_by('country_id') \
+        .filter(country_id__count__gt=1) \
+        .exclude(country_id=1)
 
-    res = get_population(countries_without_subdivisions_list, countries_list)
-    for res_id in res.keys():
-        population_from_maintable_qs = MainTable.objects.filter(subdivision_id=res_id).values('region_population')
+    countries_with_subdivisions_dict = {
+        country['country__country']: {
+            sub[list(sub)[1]]: sub[list(sub)[0]]
+            for sub in list(Subdivision.objects.filter(country_id=country['country']).values('id', 'subdivision'))
+        }
+        for country in countries_with_subdivisions_exclude_us
+    }
 
-        if population_from_maintable_qs[0]['region_population'] != res[res_id]:
-            population_from_maintable_qs.update(region_population=res[res_id])
+    all_countries_dict = {**countries_without_subdivisions, **us_subdivisions, **countries_with_subdivisions_dict}
+
+    for countries_segment in list(all_countries_dict):
+        population = get_population(countries_segment)
+
+        for res in list(population):  # sub/country
+            if res in all_countries_dict[countries_segment]:
+                MainTable.objects.filter(subdivision_id=all_countries_dict[countries_segment].pop(res)) \
+                    .update(region_population=population[res])
+
+    with open(os.path.join(REGION_POPULATION_PATH, 'get_population_error.json'),
+              'w', encoding='utf-8') as f:
+        json.dump(all_countries_dict, f, ensure_ascii=False, indent=4)
