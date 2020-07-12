@@ -2,9 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <title>Title</title>
 </head>
 <body>
-<h3>hello!</h3>
+    <div id="container" style="width: 75%;">
+        <canvas id="confirmedChart"></canvas>
+        <canvas id="deathChart"></canvas>
+        <canvas id="recoveredChart"></canvas>
+    </div>
+    <script>
+        var config_confirmed = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: {{ data_confirmed|safe }},
+                    label: 'Confirmed'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+        var config_deaths = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: {{ data_deaths|safe }},
+                    label: 'Deaths'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+        var config_recovered = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: {{ data_recovered|safe }},
+                    label: 'Recovered'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+
+        window.onload = function () {
+            var ctx = document.getElementById('confirmedChart').getContext('2d');
+            window.myPie = new Chart(ctx, config_confirmed);
+            var ctx_1 = document.getElementById('deathChart').getContext('2d');
+            window.myPie = new Chart(ctx_1, config_deaths);
+            var ctx_2 = document.getElementById('recoveredChart').getContext('2d');
+            window.myPie = new Chart(ctx_2, config_recovered);
+        };
+
+    </script>
+
 </body>
 </html>
