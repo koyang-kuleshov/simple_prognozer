@@ -7,24 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 
 REGION_POPULATION_PATH = os.path.abspath(os.path.dirname(__file__))
-
-SINGLE_COUNTRIES_POP_DATA_URL = "https://worldpopulationreview.com/countries"
-KOSOVO_POPULATION_POP_DATA_URL = "https://countrymeters.info/en/Kosovo"
-US_CITIES_POP_DATA_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/' \
-                         'csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv'
-ITALY_POPULATION_POP_DATA_URL = 'https://en.wikipedia.org/wiki/Regions_of_Italy'
-TRENTO_BOLZANO_POP_DATA_URL = 'http://www.citypopulation.de/en/italy/admin/04__trentino_alto_adige/'
-BRAZIL_POP_DATA_URL = 'https://en.wikipedia.org/wiki/States_of_Brazil'
-RU_POP_DATA_URL = 'https://en.wikipedia.org/wiki/List_of_federal_subjects_of_Russia_by_population'
-MX_POP_DATA_URL = 'https://en.wikipedia.org/wiki/List_of_Mexican_states_by_population'
-JP_POP_DATA_URL = 'https://www.citypopulation.de/Japan-Cities.html'
-CA_POP_DATA_URL = 'https://en.wikipedia.org/wiki/Population_of_Canada_by_province_and_territory'
-CO_POP_DATA_URL = 'https://www.citypopulation.de/en/colombia/cities/'
-PE_POP_DATA_URL = 'https://www.citypopulation.de/en/peru/cities/'
-ES_POP_DATA_URL = 'https://www.citypopulation.de/en/spain/cities/'
-IN_POP_DATA_URL = 'https://en.wikipedia.org/wiki/List_of_states_and_union_territories_of_India_by_population'
-CN_POP_DATA_URL = 'http://www.citypopulation.de/en/china/cities/'
-CL_POP_DATA_URL = 'https://www.citypopulation.de/en/chile/cities/'
+REGEX_INT_POP = r'^(?:(\d+(?:\,))+\d+|\d+$)'
 
 
 def get_population(country):
@@ -32,15 +15,26 @@ def get_population(country):
         "countries_without_subdivisions": single_countries_pop(),
         "US": us_pop(),
         "Italy": italy_pop(),
-        "Brazil": table_data_parser(BRAZIL_POP_DATA_URL, 'wikitable', 1, 1, 0, 4),
-        "Russia": table_data_parser(RU_POP_DATA_URL, 'wikitable', 1, 1, 1, 2),
-        "Mexico": table_data_parser(MX_POP_DATA_URL, 'wikitable', 1, 1, 1, 2),
-        "Japan": table_data_parser(JP_POP_DATA_URL, 'data', 1, 1, 1, 12),
-        "Canada": table_data_parser(CA_POP_DATA_URL, 'wikitable', 2, 1, 1, 9),
-        "Colombia": table_data_parser(CO_POP_DATA_URL, 'data', 1, 1, 1, 10),
-        "Peru": table_data_parser(PE_POP_DATA_URL, 'data', 1, 1, 1, 10),
-        "Spain": table_data_parser(ES_POP_DATA_URL, 'data', 1, 1, 1, 10),
-        "India": table_data_parser(IN_POP_DATA_URL, 'wikitable', 1, 1, 1, 2),
+        "Brazil": table_data_parser('https://en.wikipedia.org/wiki/States_of_Brazil',
+                                    'wikitable', 1, 1, 0, 4),
+        "Russia": table_data_parser('https://en.wikipedia.org/wiki/List_of_federal_subjects_of_Russia_by_population',
+                                    'wikitable', 1, 1, 1, 2),
+        "Mexico": table_data_parser('https://en.wikipedia.org/wiki/List_of_Mexican_states_by_population',
+                                    'wikitable', 1, 1, 1, 2),
+        "Japan": table_data_parser('https://www.citypopulation.de/Japan-Cities.html',
+                                   'data', 1, 1, 1, 12),
+        "Canada": table_data_parser('https://en.wikipedia.org/wiki/Population_of_Canada_by_province_and_territory',
+                                    'wikitable', 2, 1, 1, 9),
+        "Colombia": table_data_parser('https://www.citypopulation.de/en/colombia/cities/',
+                                      'data', 1, 1, 1, 10),
+        "Peru": table_data_parser('https://www.citypopulation.de/en/peru/cities/',
+                                  'data', 1, 1, 1, 10),
+        "Spain": table_data_parser('https://www.citypopulation.de/en/spain/cities/',
+                                   'data', 1, 1, 1, 10),
+        "India": table_data_parser(
+            'https://en.wikipedia.org/wiki/List_of_states_and_union_territories_of_India_by_population',
+            'wikitable', 1, 1, 1, 2
+        ),
         "United Kingdom": uk_pop(),
         "China": china_pop(),
         "Chile": chili_pop(),
@@ -62,11 +56,14 @@ def get_population(country):
     return countries_pop_data_url[country]
 
 
-def table_data_parser(url, soup_class, start_slice, end_slice, num_country, num_pop):
+def get_soup(url):
     res = requests.get(url).text
-    soup = BeautifulSoup(res, features="html.parser")
+    return BeautifulSoup(res, features="html.parser")
+
+
+def table_data_parser(url, soup_class, start_slice, end_slice, num_country, num_pop):
+    soup = get_soup(url)
     country_population = {}
-    regex = r'^(?:(\d+(?:\,))+\d+|\d+$)'
 
     with open(os.path.join(REGION_POPULATION_PATH, 'countries_aliases.json'), encoding='utf-8') as json_file:
         countries_aliases = json.load(json_file)
@@ -80,7 +77,7 @@ def table_data_parser(url, soup_class, start_slice, end_slice, num_country, num_
             # TODO take alias from mainapp_country (if table don't rewrite)
             if country in countries_aliases.keys():
                 country = countries_aliases[country]
-            population = int(re.search(regex, data[num_pop].text).group(0).replace(',', ''))
+            population = int(re.search(REGEX_INT_POP, data[num_pop].text).group(0).replace(',', ''))
             country_population.update({country: population})
         except AttributeError:
             pass
@@ -89,21 +86,17 @@ def table_data_parser(url, soup_class, start_slice, end_slice, num_country, num_
 
 
 def int_data_parser(url, soup_teg, soup_class):
-    res = requests.get(url).text
-    soup = BeautifulSoup(res, features="html.parser")
-    regex = r'^(?:(\d+(?:\,))+\d+|\d+$)'
+    soup = get_soup(url)
 
-    res = int(re.search(regex, soup.find(soup_teg, class_=soup_class).text).group(0).replace(',', ''))
+    res = int(re.search(REGEX_INT_POP, soup.find(soup_teg, class_=soup_class).text).group(0).replace(',', ''))
 
     return res
 
 
 def single_countries_pop():
-    url = SINGLE_COUNTRIES_POP_DATA_URL
-    res = requests.get(url).text
-    soup = BeautifulSoup(res, features="html.parser")
+    soup = get_soup("https://worldpopulationreview.com/countries")
 
-    with open(os.path.join(REGION_POPULATION_PATH, 'countries_aliases.json')) as json_file:
+    with open(os.path.join(REGION_POPULATION_PATH, 'countries_aliases.json'), encoding='utf-8') as json_file:
         countries_aliases = json.load(json_file)
 
     country_population = {}
@@ -121,9 +114,10 @@ def single_countries_pop():
         except AttributeError:
             break
 
-    url = KOSOVO_POPULATION_POP_DATA_URL
-    res = requests.get(url).text
-    soup = BeautifulSoup(res, features="html.parser")
+    # url = KOSOVO_POPULATION_POP_DATA_URL
+    # res = requests.get(url).text
+    # soup = BeautifulSoup(res, features="html.parser")
+    soup = get_soup("https://countrymeters.info/en/Kosovo")
 
     kosovo_pop = soup.find('div', id='cp1').text.replace(',', '')
     country_population.update({"Kosovo": kosovo_pop})
@@ -132,7 +126,8 @@ def single_countries_pop():
 
 
 def us_pop():
-    url = US_CITIES_POP_DATA_URL
+    url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/' \
+          'csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv'
     df = pd.read_csv(url, error_bad_lines=False)
 
     fips = df['FIPS']
@@ -150,14 +145,19 @@ def us_pop():
 
 
 def italy_pop():
-    country_population = table_data_parser(ITALY_POPULATION_POP_DATA_URL, 'wikitable', 2, 1, 1, 3)
-    country_population_trento_bolzano = table_data_parser(TRENTO_BOLZANO_POP_DATA_URL, 'data', 2, 1, 0, 2)
+    country_population = table_data_parser('https://en.wikipedia.org/wiki/Regions_of_Italy', 'wikitable', 2, 1, 1, 3)
+    country_population_trento_bolzano = table_data_parser(
+        'http://www.citypopulation.de/en/italy/admin/04__trentino_alto_adige/'
+        , 'data', 2, 1, 0, 2
+    )
     country_population.update(country_population_trento_bolzano)
 
     return country_population
 
 
 def uk_pop():
+    soup = get_soup('https://countrymeters.info/en/Channel_Islands')
+
     country_population = table_data_parser(
         'https://en.wikipedia.org/wiki/Countries_of_the_United_Kingdom_by_population',
         'wikitable', 1, 1, 1, 2
@@ -172,8 +172,9 @@ def uk_pop():
         "Anguilla": single_countries_pop()['Anguilla'],
         "Bermuda": single_countries_pop()['Bermuda'],
         "British Virgin Islands": single_countries_pop()['British Virgin Islands'],
-
         "Cayman Islands": single_countries_pop()['Cayman Islands'],
+        "Channel Islands": int(re.search(REGEX_INT_POP, soup.find('td', class_='counter').find_all('div')[0].text)
+                               .group(0).replace(',', '')),
         "Falkland Islands (Malvinas)": single_countries_pop()['Falkland Islands (Malvinas)'],
         "Gibraltar": single_countries_pop()['Gibraltar'],
         "Isle of Man": single_countries_pop()['Isle of Man'],
@@ -185,7 +186,7 @@ def uk_pop():
 
 
 def china_pop():
-    country_population = table_data_parser(CN_POP_DATA_URL, 'data', 1, 1, 1, 11)
+    country_population = table_data_parser('http://www.citypopulation.de/en/china/cities/', 'data', 1, 1, 1, 11)
     country_population.update({
         "Hong Kong": single_countries_pop()['Hong Kong'],
         "Macau": single_countries_pop()['Macau']
@@ -195,13 +196,14 @@ def china_pop():
 
 
 def chili_pop():
-    country_population = table_data_parser(CL_POP_DATA_URL, 'data', 1, 1, 1, 9)
+    country_population = table_data_parser('https://www.citypopulation.de/en/chile/cities/', 'data', 1, 1, 1, 9)
 
     # region Nuble for Chile
     if 'Nuble' not in country_population.keys():
-        url = 'https://www.citypopulation.de/en/chile/admin/'
-        res = requests.get(url).text
-        soup = BeautifulSoup(res, features="html.parser")
+        # url = 'https://www.citypopulation.de/en/chile/admin/'
+        # res = requests.get(url).text
+        # soup = BeautifulSoup(res, features="html.parser")
+        soup = get_soup('https://www.citypopulation.de/en/chile/admin/')
 
         for items in soup.find('table', class_='data').find_all('tr')[1::1]:
             data = items.find_all(['th', 'td'])
@@ -239,7 +241,7 @@ def ukraine_pop():
         'https://en.wikipedia.org/wiki/List_of_Ukrainian_oblasts_and_territories_by_population',
         'wikitable', 1, 1, 1, 2)
     country_population.update({
-        "Sevastopol": int_data_parser('https://populationstat.com/ukraine/sevastopol', 'div', 'main-clock')
+        "Sevastopol*": int_data_parser('https://populationstat.com/ukraine/sevastopol', 'div', 'main-clock')
     })
 
     return country_population
@@ -261,7 +263,13 @@ def france_pop():
         'wikitable', 1, 1, 1, 2)
 
     country_population.update({
-        "French Polynesia": single_countries_pop()['French Polynesia']
+        "French Polynesia": single_countries_pop()['French Polynesia'],
+        "New Caledonia": single_countries_pop()['New Caledonia'],
+        "Reunion": single_countries_pop()['Reunion'],
+        "Saint Barthelemy": single_countries_pop()['Saint Barthelemy'],
+        "Saint Pierre and Miquelon": single_countries_pop()['Saint Pierre and Miquelon'],
+        "St Martin": single_countries_pop()['St Martin'],
+        "null": single_countries_pop()['France']
     })
 
     return country_population
@@ -270,4 +278,6 @@ def france_pop():
 if __name__ == '__main__':
     # single_countries_pop()
     # regions_json_updater()
-    print(ukraine_pop())
+    # print(single_countries_pop())
+    for i in single_countries_pop():
+        print(i)

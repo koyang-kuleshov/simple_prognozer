@@ -87,10 +87,14 @@ def population_to_maintable():
         population = get_population(countries_segment)
 
         for res in list(population):  # sub/country
-            if res in all_countries_dict[countries_segment]:
+            if res == 'null':
+                MainTable.objects.filter(subdivision_id=all_countries_dict[countries_segment].pop(None)) \
+                    .update(region_population=population[res])
+            elif res in all_countries_dict[countries_segment]:
                 MainTable.objects.filter(subdivision_id=all_countries_dict[countries_segment].pop(res)) \
                     .update(region_population=population[res])
 
     with open(os.path.join(REGION_POPULATION_PATH, 'get_population_error.json'),
               'w', encoding='utf-8') as f:
         json.dump(all_countries_dict, f, ensure_ascii=False, indent=4)
+

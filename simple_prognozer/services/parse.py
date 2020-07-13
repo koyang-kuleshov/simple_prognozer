@@ -10,7 +10,7 @@ TIME_SERIES_FILE_LIST = 'csse_covid_19_data/csse_covid_19_time_series'
 
 
 def get_csv(file_name):
-    token = '2c67b8917aa76671447a6782d81e29e5c94fe0a5'  # GitHub TOKEN
+    token = 'ecc878af4cc0cfaa6f92c66aebf3e9dfc8c5c1a9'  # GitHub TOKEN
 
     repo_path = 'CSSEGISandData/COVID-19'
     daily_reports_dir_path = 'https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_daily_reports/'
