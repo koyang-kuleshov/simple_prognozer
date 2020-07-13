@@ -17,32 +17,34 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "simple_prognozer.settings")
 django.setup()
 
-from mainapp.models import MainTable
+from mainapp.models import MainTable, TimeSeries
 
 INFECTION_LIMIT = 0.8
 
 
-def date_convert(combine_datetime):
-    year, month, day = map(lambda i: int(i),
-                           combine_datetime.split(' ')[0].split('-'))
-    return year, month, day
-
-
 def simple_method(reg):
-    country, sub = reg
-    if len(country) > 2:
-        country = country.title().replace('-', ' ')
+    # TODO: Add exceptions
+    if len(reg["country"]) > 2:
+        country = reg["country"].title().replace('-', ' ')
     else:
         country = 'US'
-    sub = sub.title().replace('-', ' ')
-    region = MainTable.objects.filter(country_id__country=country,
-                                      subdivision_id__subdivision=sub)
+    region = MainTable.objects.filter(country_id__country=country)
+    if reg["subdivision"]:
+        sub = reg["subdivision"].title().replace('-', ' ')
+        region = MainTable.objects.filter(country_id__country=country,
+                                          subdivision_id__subdivision=sub)
+    if reg["admin2"]:
+        admin2 = reg["admin2"].title().replace('-', ' ')
+        region = MainTable.objects.filter(country_id__country=country,
+                                          subdivision_id__subdivision=sub,
+                                          subdivision_id__admin2=admin2)
+
     region_population = region[0].region_population
     infections_limit = math.ceil(INFECTION_LIMIT * region_population)
 
-    # TODO: Fetch from TimeSeries
-    first_update = datetime.date(*date_convert('2020-03-02 04:33:46')).\
-        toordinal()
+    first_update = TimeSeries.objects.filter(country_id__country=country,
+                                             subdivision_id__subdivision=sub).\
+        order_by('last_update')[0].last_update.toordinal()
     last_update = region[0].last_update.toordinal()
     observation_period = last_update - first_update
 
@@ -55,4 +57,9 @@ def simple_method(reg):
 
 
 if __name__ == "__main__":
-    print(simple_method(('us', 'new-york')))
+    region = {
+        'country': 'russia',
+        'subdivision': 'moscow',
+        'admin2': None
+        }
+    print(simple_method(region))
