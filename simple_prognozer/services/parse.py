@@ -4,7 +4,7 @@ import requests
 
 
 def get_csv(file_name):
-    token = ''  # GitHub TOKEN
+    token = 'f8e28bf95d4541ad8a41b79e0745965399dfc6f8'
 
     repo_path = 'CSSEGISandData/COVID-19'
     daily_reports_dir_path = 'https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_daily_reports/'
