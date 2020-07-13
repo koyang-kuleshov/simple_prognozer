@@ -12,7 +12,6 @@
         <!-- Theme icon -->
         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
-        <link href="assets/plugins/morris-chart/morris.css" rel="stylesheet">
         <!-- Theme Css -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
         <link href="assets/css/slidebars.min.css" rel="stylesheet">
@@ -42,7 +41,7 @@
                         <li>
                             <h3 class="navigation-title">Navigation</h3>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="index.html"><i class="mdi mdi-gauge"></i> <span>Dashboard</span></a>
                         </li>
                         <li class="menu-list"><a href=""><i class="mdi mdi-buffer"></i> <span>UI Elements</span></a>
@@ -80,9 +79,9 @@
                                 <li><a href="icons-themify.html"> Themify</a></li>
                             </ul>
                         </li>
-                        <li class="menu-list"><a href="javascript:;"><i class="mdi mdi-table"></i> <span>Tables</span></a>
+                        <li class="menu-list nav-active active"><a href="javascript:;"><i class="mdi mdi-table"></i> <span>Tables</span></a>
                             <ul class="child-list">
-                                <li><a href="tables-basic.html"> Basic Table</a></li>
+                                <li class="active"><a href="tables-basic.html"> Basic Table</a></li>
                                 <li><a href="tables-datatable.html"> Data Table</a></li>
                                 <li><a href="tables-editable.html"> Editable </a></li>
                                 <li><a href="tables-responsive.html"> Responsive Table </a></li>
@@ -335,7 +334,6 @@
                                         <a class="dropdown-item" href="#"><i class="mdi mdi-lock-open-outline m-r-5 text-muted"></i> Lock screen</a>
                                         <a class="dropdown-item" href="#"><i class="mdi mdi-logout m-r-5 text-muted"></i> Logout</a>
                                     </div>
-
                                 </li>
 
                                 <li>
@@ -351,251 +349,434 @@
 
                 <div class="container-fluid">
                     <div class="page-head">
-                        <h4 class="mt-2 mb-2">Dashboard</h4>
+                        <h4 class="my-2">Basic Tables</h4>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-3">
-                                   <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-eye"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="dynamicbar">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">145</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                   <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center text-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-user"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="inlinesparkline">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">946</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                    <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-money"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="dynamicbar">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">548</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                    <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-wallet"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="inlinesparkline">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">999</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
+                    <div class="basic-table">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Code Editor Example</h5>
+                                        <p>Using the most basic table markup, here’s how <code>.table</code>-based tables look in Bootstrap.</p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">4</th>
+                                                        <td>Markol</td>
+                                                        <td>the otto</td>
+                                                        <td>@dribbble</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>           
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div><!--end row-->
-                    <div class="row">
-                        <div class="col-lg-9 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Overview</h5>           
-                                    <div id="morris-line-chart" style="height: 360px;"></div>             
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">                                    
-                                    <div class="border-b pb-3 pt-1">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Sheres</h6>
-                                                <h3>1,503</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-2"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div> 
-                                    <div class="border-b pb-3 pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Clicks</h6>
-                                                <h3>11,503</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    <div class="border-b pb-3 pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Virality</h6>
-                                                <h3>3.55%</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-3"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    <div class="pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Counteries</h6>
-                                                <h3>36</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-2"></span>
-                                            </div>                                            
+
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Bordered table </h5>
+                                        <p>Add  <code>.table-bordered</code> for borders on all sides of the table and cells.</p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@TwBootstrap</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">4</th>
+                                                        <td colspan="2">Larry the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div><!--end row-->
 
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Summary</h5>           
-                                    <div id="morris-donut-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Revenue</h5>           
-                                    <div id="morris-bar-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Email Sent</h5>           
-                                    <div id="extra-area-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Recent Contacts</h5>           
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover m-b-0">
-                                                    <thead>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Table Head Dark</h5>
+                                        <p>Similar to tables and dark tables, use the modifier classes <code>.thead-dark</code> to make <thead>s appear dark. </p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table">
+                                                <thead class="thead-dark">
                                                         <tr>
-                                                            <th>Name</th>
-                                                            <th>Position</th>
-                                                            <th>Office</th>
-                                                            <th>Age</th>
-                                                            <th>Start date</th>
-                                                            <th>Salary</th>
+                                                            <th scope="col">#</th>
+                                                            <th scope="col">First Name</th>
+                                                            <th scope="col">Last Name</th>
+                                                            <th scope="col">Username</th>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Tiger Nixon</td>
-                                                            <td>System Architect</td>
-                                                            <td>Edinburgh</td>
-                                                            <td>61</td>
-                                                            <td>2011/04/25</td>
-                                                            <td>$320,800</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Garrett Winters</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>63</td>
-                                                            <td>2011/07/25</td>
-                                                            <td>$170,750</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Ashton Cox</td>
-                                                            <td>Junior Technical Author</td>
-                                                            <td>San Francisco</td>
-                                                            <td>66</td>
-                                                            <td>2009/01/12</td>
-                                                            <td>$86,000</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Cedric Kelly</td>
-                                                            <td>Senior Javascript Developer</td>
-                                                            <td>Edinburgh</td>
-                                                            <td>22</td>
-                                                            <td>2012/03/29</td>
-                                                            <td>$433,060</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Airi Satou</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>33</td>
-                                                            <td>2008/11/28</td>
-                                                            <td>$162,700</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Brielle Williamson</td>
-                                                            <td>Integration Specialist</td>
-                                                            <td>New York</td>
-                                                            <td>61</td>
-                                                            <td>2012/12/02</td>
-                                                            <td>$372,000</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Herrod Chandler</td>
-                                                            <td>Sales Assistant</td>
-                                                            <td>San Francisco</td>
-                                                            <td>59</td>
-                                                            <td>2012/08/06</td>
-                                                            <td>$137,500</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>              
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Table Head Light </h5>
+                                        <p>Similar to tables and dark tables, use the modifier classes <code>.thead-light</code> to make <thead>s appear light </p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--end row-->
 
-                        
-                    </div>                            
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Striped Table </h5>
+                                        <p>Use <code>.table-striped</code> to add zebra-striping to any table row within the<code> &lttbody&gt</code>. </p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Hover Table </h5>
+                                        <p>Add <code>.table-hover</code> to enable a hover state on table rows within a <code> &lttbody&gt</code>. </p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td colspan="2">Larry the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>                              
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--end row-->
+
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Contextual classes </h5>
+                                        <p>Use contextual classes to color table rows or individual cells. </p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">First Name</th>
+                                                    <th scope="col">Last Name</th>
+                                                    <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="table-primary">
+                                                        <th scope="row">1</th>
+                                                        <td class="">Mark</td>
+                                                        <td class="">Otto</td>
+                                                        <td class="">@mdo</td>
+                                                    </tr>
+                                                    <tr class="">
+                                                    <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr class="table-secondary">
+                                                        <th scope="row">3</th>
+                                                        <td class="">Larry</td>
+                                                        <td class="" class="">the Bird</td>
+                                                        <td class="">@twitter</td>
+                                                    </tr>
+                                                    <tr class="">
+                                                        <th scope="row">4</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr class="table-success">
+                                                    <th scope="row">5</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr class="">
+                                                        <th scope="row">6</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                    <tr class="table-info">
+                                                    <th scope="row">7</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr class="">
+                                                        <th scope="row">8</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                    <tr class="table-warning">
+                                                    <th scope="row">9</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr class="">
+                                                        <th scope="row">10</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Captions Table </h5>
+                                        <p>A <code>&ltcaption&gt</code> functions like a heading for a table. It helps users with screen readers to find a table and understand what it’s about and decide if they want to read it. </p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table">
+                                                <caption>List of users</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Larry</td>
+                                                        <td>the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h5 class="header-title">Small table</h5>
+                                        <p>Add <code>.table-sm</code> to make tables more compact by cutting cell padding in half.</p>
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">First Name</th>
+                                                        <th scope="col">Last Name</th>
+                                                        <th scope="col">Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>@mdo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Jacob</td>
+                                                        <td>Thornton</td>
+                                                        <td>@fat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td colspan="2">Larry the Bird</td>
+                                                        <td>@twitter</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--end row-->
+                    </div>                   
                     
                 </div><!--end container-->
 
@@ -897,28 +1078,9 @@
         <script src="assets/js/modernizr.min.js"></script>
         <script src="assets/js/jquery.slimscroll.min.js"></script>
         <script src="assets/js/slidebars.min.js"></script>
-
-        <!--plugins js-->
-        <script src="assets/plugins/counter/jquery.counterup.min.js"></script>
-        <script src="assets/plugins/waypoints/jquery.waypoints.min.js"></script>
-        <script src="assets/plugins/sparkline-chart/jquery.sparkline.min.js"></script>
-        <script src="assets/pages/jquery.sparkline.init.js"></script>
-
-        <script src="assets/plugins/chart-js/Chart.bundle.js"></script>
-        <script src="assets/plugins/morris-chart/raphael-min.js"></script>
-        <script src="assets/plugins/morris-chart/morris.js"></script>
-        <script src="assets/pages/dashboard-init.js"></script>
-
+        
 
         <!--app js-->
         <script src="assets/js/jquery.app.js"></script>
-        <script>
-            jQuery(document).ready(function($) {
-                $('.counter').counterUp({
-                delay: 100,
-                time: 1200
-                });
-            });
-        </script>
     </body>
 </html>

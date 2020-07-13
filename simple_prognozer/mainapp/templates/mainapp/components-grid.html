@@ -12,7 +12,6 @@
         <!-- Theme icon -->
         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
-        <link href="assets/plugins/morris-chart/morris.css" rel="stylesheet">
         <!-- Theme Css -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
         <link href="assets/css/slidebars.min.css" rel="stylesheet">
@@ -42,7 +41,7 @@
                         <li>
                             <h3 class="navigation-title">Navigation</h3>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="index.html"><i class="mdi mdi-gauge"></i> <span>Dashboard</span></a>
                         </li>
                         <li class="menu-list"><a href=""><i class="mdi mdi-buffer"></i> <span>UI Elements</span></a>
@@ -61,10 +60,10 @@
                         <li>
                             <h3 class="navigation-title">Components</h3>
                         </li>
-                        <li class="menu-list"><a href=""><i class="mdi mdi-google-circles-extended"></i> <span>Components <span
+                        <li class="menu-list nav-active active"><a href=""><i class="mdi mdi-google-circles-extended"></i> <span>Components <span
                                 class="badge badge-primary noti-arrow pull-right">6</span> </span></a>
                             <ul class="child-list">
-                                <li><a href="components-grid.html"> Grid</a></li>
+                                <li class="active"><a href="components-grid.html"> Grid</a></li>
                                 <li><a href="components-calendar.html"> Calendar</a></li>
                                 <li><a href="components-sweet-alerts.html"> Sweet Alerts </a></li>
                                 <li><a href="components-portlets.html"> Portlets </a></li>
@@ -351,251 +350,191 @@
 
                 <div class="container-fluid">
                     <div class="page-head">
-                        <h4 class="mt-2 mb-2">Dashboard</h4>
+                        <h4 class="mt-2 mb-2">Bootstrap Grids</h4>
                     </div>
                     <div class="row">
                         <div class="col-lg-12 col-sm-12">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-3">
-                                   <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-eye"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="dynamicbar">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">145</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                   <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center text-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-user"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="inlinesparkline">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">946</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                    <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-money"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="dynamicbar">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">548</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                    <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-wallet"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="inlinesparkline">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">999</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
+                            <div class="card bg-white m-b-30">
+                                <div class="card-body">
+                                    <h5 class="header-title">Grid Options</h5>
+                                    <p class="text-muted">While Bootstrap uses ems or <code>rem</code>s for defining most sizes,<code> px</code>s are used for grid breakpoints and container widths. This is because the viewport width is in pixels and does not change with the font size.</p>             
+                                    <div class="box">
+                                        <table class="grid-data-table table-bordered grid-data-table-no-number">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>
+                                                        <i class="fa fa-mobile"></i>
+                                                        Extra small devices
+                                                        <small> (&lt;576px)</small>
+                                                    </th>
+                                                    <th>
+                                                        <i class="fa fa-tablet"></i>
+                                                        Small devices
+                                                        <small> (≥576px)</small>
+                                                    </th>
+                                                    <th>
+                                                        <i class="fa fa-desktop"></i>
+                                                        Medium devices
+                                                        <small> (≥768px)</small>
+                                                    </th>
+                                                    <th>
+                                                        <i class="fa fa-desktop"></i>
+                                                        Large devices
+                                                        <small>(≥992px)</small>
+                                                    </th>
+                                                    <th>
+                                                        <i class="fa fa-television"></i>
+                                                        Extra Large devices
+                                                        <small> (≥1200px)</small>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>                                           
+                                                <tr>
+                                                    <th>Max container width</th>
+                                                    <td>None (auto)</td>
+                                                    <td>540px</td>
+                                                    <td>720px</td>
+                                                    <td>960px</td>
+                                                    <td>1140px</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Class prefix</th>
+                                                    <td><code>.col-</code></td>
+                                                    <td><code>.col-sm-</code></td>
+                                                    <td><code>.col-md-</code></td>
+                                                    <td><code>.col-lg-</code></td>
+                                                    <td><code>.col-xl-</code></td>
+                                                </tr>
+                                                <tr>
+                                                    <th># of columns</th>
+                                                    <td colspan="5">12</td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <th>Gutter width</th>
+                                                    <td colspan="5">30px (15px on each side of a column)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Nestable</th>
+                                                    <td colspan="5">Yes</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Offset/(Max-Auto)</th>
+                                                    <td colspan="5">Yes</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Column ordering</th>
+                                                    <td colspan="5">Yes</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>             
                                 </div>
                             </div>
-                        </div>
+                        </div>                    
                     </div><!--end row-->
+                    
                     <div class="row">
-                        <div class="col-lg-9 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Overview</h5>           
-                                    <div id="morris-line-chart" style="height: 360px;"></div>             
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">                                    
-                                    <div class="border-b pb-3 pt-1">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Sheres</h6>
-                                                <h3>1,503</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-2"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div> 
-                                    <div class="border-b pb-3 pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Clicks</h6>
-                                                <h3>11,503</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    <div class="border-b pb-3 pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Virality</h6>
-                                                <h3>3.55%</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-3"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    <div class="pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Counteries</h6>
-                                                <h3>36</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-2"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Summary</h5>           
-                                    <div id="morris-donut-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Revenue</h5>           
-                                    <div id="morris-bar-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Email Sent</h5>           
-                                    <div id="extra-area-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="col-lg-12 col-sm-12">
-                            <div class="card m-b-30">
+                            <div class="card bg-white m-b-30">
                                 <div class="card-body">
-                                    <h5 class="header-title pb-3">Recent Contacts</h5>           
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover m-b-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>Position</th>
-                                                            <th>Office</th>
-                                                            <th>Age</th>
-                                                            <th>Start date</th>
-                                                            <th>Salary</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Tiger Nixon</td>
-                                                            <td>System Architect</td>
-                                                            <td>Edinburgh</td>
-                                                            <td>61</td>
-                                                            <td>2011/04/25</td>
-                                                            <td>$320,800</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Garrett Winters</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>63</td>
-                                                            <td>2011/07/25</td>
-                                                            <td>$170,750</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Ashton Cox</td>
-                                                            <td>Junior Technical Author</td>
-                                                            <td>San Francisco</td>
-                                                            <td>66</td>
-                                                            <td>2009/01/12</td>
-                                                            <td>$86,000</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Cedric Kelly</td>
-                                                            <td>Senior Javascript Developer</td>
-                                                            <td>Edinburgh</td>
-                                                            <td>22</td>
-                                                            <td>2012/03/29</td>
-                                                            <td>$433,060</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Airi Satou</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>33</td>
-                                                            <td>2008/11/28</td>
-                                                            <td>$162,700</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Brielle Williamson</td>
-                                                            <td>Integration Specialist</td>
-                                                            <td>New York</td>
-                                                            <td>61</td>
-                                                            <td>2012/12/02</td>
-                                                            <td>$372,000</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Herrod Chandler</td>
-                                                            <td>Sales Assistant</td>
-                                                            <td>San Francisco</td>
-                                                            <td>59</td>
-                                                            <td>2012/08/06</td>
-                                                            <td>$137,500</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                    <h5 class="header-title">Grid-Example</h5>
+                                    <p class="text-muted">Using a single set of <code>.col-sm-*</code> classes, you can create a basic grid system that starts out stacked on extra small devices before becoming horizontal on desktop (medium) devices.</p>             
+                                    <div class="text-center">
+                                        <div class="row grid-col">
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>
+                                            <div class="col-sm-1">.col-sm-1</div>                                        
                                         </div>
-                                    </div>              
+
+                                        <div class="row grid-col">
+                                            <div class="col-sm-2">.col-sm-2</div>
+                                            <div class="col-sm-2">.col-sm-2</div>
+                                            <div class="col-sm-2">.col-sm-2</div>
+                                            <div class="col-sm-2">.col-sm-2</div>
+                                            <div class="col-sm-2">.col-sm-2</div>
+                                            <div class="col-sm-2">.col-sm-2</div>                                                                             
+                                        </div>
+
+                                        <div class="row grid-col">
+                                            <div class="col-sm-3">.col-sm-3</div>
+                                            <div class="col-sm-3">.col-sm-3</div>
+                                            <div class="col-sm-3">.col-sm-3</div>
+                                            <div class="col-sm-3">.col-sm-3</div>                                                                            
+                                        </div>
+
+                                        <div class="row grid-col">
+                                            <div class="col-sm-4">.col-sm-4</div>
+                                            <div class="col-sm-4">.col-sm-4</div>
+                                            <div class="col-sm-4">.col-sm-4</div>                                                                          
+                                        </div>
+
+                                        <div class="row grid-col">
+                                            <div class="col-sm-6">.col-sm-6</div>
+                                            <div class="col-sm-6">.col-sm-6</div>                                                                        
+                                        </div>
+
+                                        <div class="row grid-col">
+                                            <div class="col-sm-12">.col-sm-12</div>                                                                       
+                                        </div>                                        
+                                    </div>                 
+                                </div>
+                            </div>
+                        </div>                    
+                    </div><!--end row-->
+
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="card bg-white m-b-30">
+                                <div class="card-body">
+                                    <h5 class="header-title">Max-Auto (Offset)</h5>
+                                    <p class="text-muted">Move columns to the right using <code>.offset-md-*</code> classes. These classes increase the left margin of a column by * columns. For example, <code>.offset-md-4</code> moves <code>.col-md-4</code> over four columns. With the move to flexbox in v4, you can use margin utilities like <code>.mr-auto</code> to force sibling columns away from one another.</p>
+                                    <div class="text-center">
+                                        <div class="row grid-col">
+                                            <div class="col-sm-8 mx-auto">.col-sm-8 mx-auto</div>                                                                        
+                                        </div>
+                                        <div class="row grid-col">                                        
+                                            <div class="col-sm-3 ml-auto">.col-sm-3 ml-auto</div>
+                                            <div class="col-sm-3 ml-auto">.col-sm-3 ml-auto</div>                                                                           
+                                        </div>
+                                        <div class="row grid-col">                                        
+                                            <div class="col-sm-3 mr-auto">.col-sm-3 mr-auto</div>
+                                            <div class="col-sm-3 mr-auto">.col-sm-3 mr-auto</div>                                                                           
+                                        </div>
+                                    </div>                 
                                 </div>
                             </div>
                         </div>
-
-                        
-                    </div>                            
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="card bg-white m-b-30">
+                                <div class="card-body">
+                                    <h5 class="header-title">Nested Grid</h5>
+                                    <p class="text-muted">To nest your content with the default grid, add a new <code>.row</code> and set of <code>.col-sm-*</code> columns within an existing <code>.col-sm-*</code> column. Nested rows should include a set of columns that add up to 12 or fewer (it is not required that you use all 12 available columns).</p>             
+                                    <div class="text-center">
+                                        <div class="row grid-col">
+                                            <div class="col-sm-8 mx-auto">.col-sm-8 mx-auto
+                                                <div class="row nested-col">
+                                                    <div class="col-sm-6">.col-sm-6</div>
+                                                    <div class="col-sm-6">.col-sm-6</div>
+                                                </div>
+                                            </div>                                                                    
+                                        </div>
+                                    </div>                 
+                                </div>
+                            </div>
+                        </div>                          
+                    </div><!--end row-->                   
                     
                 </div><!--end container-->
 
@@ -897,28 +836,9 @@
         <script src="assets/js/modernizr.min.js"></script>
         <script src="assets/js/jquery.slimscroll.min.js"></script>
         <script src="assets/js/slidebars.min.js"></script>
-
-        <!--plugins js-->
-        <script src="assets/plugins/counter/jquery.counterup.min.js"></script>
-        <script src="assets/plugins/waypoints/jquery.waypoints.min.js"></script>
-        <script src="assets/plugins/sparkline-chart/jquery.sparkline.min.js"></script>
-        <script src="assets/pages/jquery.sparkline.init.js"></script>
-
-        <script src="assets/plugins/chart-js/Chart.bundle.js"></script>
-        <script src="assets/plugins/morris-chart/raphael-min.js"></script>
-        <script src="assets/plugins/morris-chart/morris.js"></script>
-        <script src="assets/pages/dashboard-init.js"></script>
-
+        
 
         <!--app js-->
         <script src="assets/js/jquery.app.js"></script>
-        <script>
-            jQuery(document).ready(function($) {
-                $('.counter').counterUp({
-                delay: 100,
-                time: 1200
-                });
-            });
-        </script>
     </body>
 </html>

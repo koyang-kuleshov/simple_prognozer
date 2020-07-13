@@ -12,7 +12,6 @@
         <!-- Theme icon -->
         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
-        <link href="assets/plugins/morris-chart/morris.css" rel="stylesheet">
         <!-- Theme Css -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
         <link href="assets/css/slidebars.min.css" rel="stylesheet">
@@ -42,7 +41,7 @@
                         <li>
                             <h3 class="navigation-title">Navigation</h3>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="index.html"><i class="mdi mdi-gauge"></i> <span>Dashboard</span></a>
                         </li>
                         <li class="menu-list"><a href=""><i class="mdi mdi-buffer"></i> <span>UI Elements</span></a>
@@ -110,11 +109,11 @@
                                 <li><a href="chart-knob.html">Knob Chart</a></li>
                             </ul>
                         </li>
-                        <li class="menu-list"><a href=""><i class="mdi mdi-email" aria-hidden="true"></i><span>Mail </span></a>
+                        <li class="menu-list nav-active active"><a href=""><i class="mdi mdi-email" aria-hidden="true"></i><span>Mail </span></a>
                             <ul class="child-list">
                                 <li><a href="email-inbox.html">Inbox</a></li>
                                 <li><a href="email-compose.html">Compose mail</a></li>
-                                <li><a href="email-read.html">View Mail</a></li>
+                                <li class="active"><a href="email-read.html">View Mail</a></li>
                             </ul>
                         </li>
                         <li class="menu-list"><a href=""><i class="mdi mdi-newspaper" aria-hidden="true"></i><span>Email Templates</span></a>
@@ -335,7 +334,6 @@
                                         <a class="dropdown-item" href="#"><i class="mdi mdi-lock-open-outline m-r-5 text-muted"></i> Lock screen</a>
                                         <a class="dropdown-item" href="#"><i class="mdi mdi-logout m-r-5 text-muted"></i> Logout</a>
                                     </div>
-
                                 </li>
 
                                 <li>
@@ -351,251 +349,157 @@
 
                 <div class="container-fluid">
                     <div class="page-head">
-                        <h4 class="mt-2 mb-2">Dashboard</h4>
+                        <h4 class="mt-2 mb-2">Email Read</h4>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-3">
-                                   <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-eye"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="dynamicbar">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">145</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
+                    <div class="email-read">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card m-b-30 mail-inbox">
+                                    <div class="card-body">
+                                        <div class="card-title border-b mb-4">
+                                            <img src="assets/images/users/avatar-11.jpg" alt="" class="img-thumbnail mb-3">
+                                            <div class="d-inline-block ml-2">
+                                                <h6 class="m-0">Henry Roberts</h6>
+                                                <a href="#">HenryRoberts123@gmail.com</a>
+                                            </div>                                        
                                         </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                   <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center text-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-user"></i></div>
+                                        <div class="row">        
+                                            <div class="col-md-3 border-r">
+                                            <a href="email-compose.html" class="btn btn-danger btn-block">Compose</a>                                            
+                                            <div class="card border-0 p-0  mt-4">
+                                                <div class="card-body p-0">
+                                                    <div class="list-group mail-list">
+                                                        <a href="#" class="list-group-item border-0 active"><i class="ti-download mr-2"></i>Inbox <span class="badge bg-warning pull-right">8</span></a>
+                                                        <a href="#" class="list-group-item border-0"><i class="ti-star mr-2"></i>Starred</a>
+                                                        <a href="#" class="list-group-item border-0"><i class="ti-file mr-2"></i>Draft <span class="badge bg-success pull-right">20</span></a>
+                                                        <a href="#" class="list-group-item border-0"><i class="ti-location-arrow mr-2"></i>Sent Mail</a>
+                                                        <a href="#" class="list-group-item border-0"><i class="ti-trash mr-2"></i>Trash <span class="badge bg-danger pull-right">211</span></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-4">
-                                                <div class="inlinesparkline">Loading..</div>
+
+                                            <h6 class="card-title text-muted border-b pb-3 mt-4">Labels</h6>
+                                            <div class="card border-0 border-b  mt-2">
+                                                <div class="card-body p-0">
+                                                    <div class="list-group border-0">
+                                                      <a href="#" class="list-group-item border-0"><span class="ti-control-record text-warning pull-right"></span>Work</a>
+                                                      <a href="#" class="list-group-item border-0"><span class="ti-control-record text-primary pull-right"></span>Clients</a>
+                                                      <a href="#" class="list-group-item border-0"><span class="ti-control-record text-danger pull-right"></span>Friends</a>
+                                                      <a href="#" class="list-group-item border-0"><span class="ti-control-record text-success pull-right"></span>Family</a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">946</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
+
+                                            <div class="card border-0  mt-1">
+                                                <div class="card-body p-0">
+                                                    <div class="list-group border-0">
+                                                      <a href="#" class="list-group-item border-0"><span class="ti-settings mr-2"></span>settings</a>
+                                                    </div>
+                                                </div>
+                                            </div>                                                  
                                         </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                    <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-money"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="dynamicbar">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">548</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                                <div class="col-lg-3 col-sm-3">
-                                    <div class="widget-box bg-white m-b-30">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-4">
-                                                <div class="text-center"><i class="ti ti-wallet"></i></div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="inlinesparkline">Loading..</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <h2 class="m-0 counter">999</h2>
-                                                <p>Visits Today</p> 
-                                            </div>
-                                        </div>
-                                   </div> 
-                                </div>
-                            </div>
-                        </div>
-                    </div><!--end row-->
-                    <div class="row">
-                        <div class="col-lg-9 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Overview</h5>           
-                                    <div id="morris-line-chart" style="height: 360px;"></div>             
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">                                    
-                                    <div class="border-b pb-3 pt-1">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Sheres</h6>
-                                                <h3>1,503</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-2"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div> 
-                                    <div class="border-b pb-3 pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Clicks</h6>
-                                                <h3>11,503</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart"></span>
-                                            </div>                                            
+                                           
+                                            <div class="col-md-9">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="btn-toolbar mb-4" role="toolbar">
+                                                            <div class="btn-group mr-2">
+                                                                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-inbox"></i></button>
+                                                                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-exclamation-circle"></i></button>
+                                                                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-trash-o"></i></button>
+                                                            </div>
+                                                            <div class="btn-group mr-2">
+                                                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fa fa-folder"></i>
+                                                                <b class="caret"></b>
+                                                                </button>
+                                                               <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>                                                            
+                                                                </div>
+                                                            </div>
+                                                            <div class="btn-group mr-2">
+                                                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fa fa-tag"></i>
+                                                                <b class="caret"></b>
+                                                                </button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>                                                            
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="btn-group mr-2">
+                                                                <button type="button" class="btn btn-info">More</button>
+                                                                <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="sr-only">More</span>
+                                                                </button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>
+                                                                    <a class="dropdown-item" href="#">Dropdown Link</a>                                                            
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                            
+                                                </div><!--end row-->
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-sm-12">
+                                                        <div class="card mb-2">
+                                                            <div class="card-body">
+                                                                <div class="media m-b-30 ">
+                                                                    <a href="#" class="pull-left">
+                                                                        <img alt="" src="assets/images/users/avatar-12.jpg" class="media-object img-thumbnail">
+                                                                    </a>
+                                                                    <div class="media-body mt-2 ml-2">
+                                                                        <span class="media-meta pull-right">07:23 AM</span>
+
+                                                                        <h6 class="text-dark m-0">Richard Jacob<small><i class="fa fa-circle text-danger ml-2"></i></small></h6>
+                                                                        <small class="text-muted">From: Richardjacob@admined.com</small>
+                                                                    </div>
+                                                                </div> <!-- media -->
+                                                                <p><b>Hi Bro...</b></p>
+                                                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.</p>
+                                                                <p>Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.</p>
+                                                                <p>Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar,</p>
+
+                                                                <hr/>
+
+                                                                <h6> <i class="fa fa-paperclip m-r-10 m-b-10"></i> Attachments <span>(2)</span> </h6>
+
+                                                                <a href="#" class="thumb-sm"> <img src="assets/images/general/email1.png" alt="attachment" class="br-radius img-thumbnail mr-2"> </a>
+                                                                <a href="#" class="thumb-sm"> <img src="assets/images/general/email2.png" alt="attachment" class="br-radius img-thumbnail"> </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!--end row-->
+                                                <div class="row">
+                                                    <div class="col-lg-12 p-0  col-sm-12">
+                                                        <div class="card m-b-30 border-0">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="col-sm-1 p-0">
+                                                                       <img src="assets/images/users/avatar-11.jpg" alt="" class="img-thumbnail pull-right"> 
+                                                                    </div>
+                                                                    <div class="col-sm-11 pl-0">
+                                                                       <textarea required="" class="form-control" placeholder="Reply..."></textarea>
+                                                                        <button class="btn btn-info my-3 pull-right"> <span>Send</span> <i class="fa fa-send ml-2"></i> </button> 
+                                                                    </div>
+                                                                </div>
+                                                             </div>
+                                                        </div>
+                                                    </div>                                                 
+                                                </div><!--end row-->                                            
+                                            </div>                                
                                         </div>
                                     </div>
-                                    <div class="border-b pb-3 pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Virality</h6>
-                                                <h3>3.55%</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-3"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    <div class="pt-4">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <h6 class="text-muted">Counteries</h6>
-                                                <h3>36</h3>
-                                            </div>
-                                            <div class="col-4">
-                                                <span class="pull-right linechart-2"></span>
-                                            </div>                                            
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Summary</h5>           
-                                    <div id="morris-donut-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Revenue</h5>           
-                                    <div id="morris-bar-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Email Sent</h5>           
-                                    <div id="extra-area-chart"></div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h5 class="header-title pb-3">Recent Contacts</h5>           
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover m-b-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>Position</th>
-                                                            <th>Office</th>
-                                                            <th>Age</th>
-                                                            <th>Start date</th>
-                                                            <th>Salary</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Tiger Nixon</td>
-                                                            <td>System Architect</td>
-                                                            <td>Edinburgh</td>
-                                                            <td>61</td>
-                                                            <td>2011/04/25</td>
-                                                            <td>$320,800</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Garrett Winters</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>63</td>
-                                                            <td>2011/07/25</td>
-                                                            <td>$170,750</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Ashton Cox</td>
-                                                            <td>Junior Technical Author</td>
-                                                            <td>San Francisco</td>
-                                                            <td>66</td>
-                                                            <td>2009/01/12</td>
-                                                            <td>$86,000</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Cedric Kelly</td>
-                                                            <td>Senior Javascript Developer</td>
-                                                            <td>Edinburgh</td>
-                                                            <td>22</td>
-                                                            <td>2012/03/29</td>
-                                                            <td>$433,060</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Airi Satou</td>
-                                                            <td>Accountant</td>
-                                                            <td>Tokyo</td>
-                                                            <td>33</td>
-                                                            <td>2008/11/28</td>
-                                                            <td>$162,700</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Brielle Williamson</td>
-                                                            <td>Integration Specialist</td>
-                                                            <td>New York</td>
-                                                            <td>61</td>
-                                                            <td>2012/12/02</td>
-                                                            <td>$372,000</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Herrod Chandler</td>
-                                                            <td>Sales Assistant</td>
-                                                            <td>San Francisco</td>
-                                                            <td>59</td>
-                                                            <td>2012/08/06</td>
-                                                            <td>$137,500</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>              
-                                </div>
-                            </div>
-                        </div>
-
-                        
-                    </div>                            
+                        </div><!--end row-->
+                    </div>
+                   
                     
                 </div><!--end container-->
 
@@ -897,28 +801,9 @@
         <script src="assets/js/modernizr.min.js"></script>
         <script src="assets/js/jquery.slimscroll.min.js"></script>
         <script src="assets/js/slidebars.min.js"></script>
-
-        <!--plugins js-->
-        <script src="assets/plugins/counter/jquery.counterup.min.js"></script>
-        <script src="assets/plugins/waypoints/jquery.waypoints.min.js"></script>
-        <script src="assets/plugins/sparkline-chart/jquery.sparkline.min.js"></script>
-        <script src="assets/pages/jquery.sparkline.init.js"></script>
-
-        <script src="assets/plugins/chart-js/Chart.bundle.js"></script>
-        <script src="assets/plugins/morris-chart/raphael-min.js"></script>
-        <script src="assets/plugins/morris-chart/morris.js"></script>
-        <script src="assets/pages/dashboard-init.js"></script>
-
+        
 
         <!--app js-->
         <script src="assets/js/jquery.app.js"></script>
-        <script>
-            jQuery(document).ready(function($) {
-                $('.counter').counterUp({
-                delay: 100,
-                time: 1200
-                });
-            });
-        </script>
     </body>
 </html>
