@@ -114,9 +114,6 @@ def single_countries_pop():
         except AttributeError:
             break
 
-    # url = KOSOVO_POPULATION_POP_DATA_URL
-    # res = requests.get(url).text
-    # soup = BeautifulSoup(res, features="html.parser")
     soup = get_soup("https://countrymeters.info/en/Kosovo")
 
     kosovo_pop = soup.find('div', id='cp1').text.replace(',', '')
@@ -200,9 +197,6 @@ def chili_pop():
 
     # region Nuble for Chile
     if 'Nuble' not in country_population.keys():
-        # url = 'https://www.citypopulation.de/en/chile/admin/'
-        # res = requests.get(url).text
-        # soup = BeautifulSoup(res, features="html.parser")
         soup = get_soup('https://www.citypopulation.de/en/chile/admin/')
 
         for items in soup.find('table', class_='data').find_all('tr')[1::1]:
