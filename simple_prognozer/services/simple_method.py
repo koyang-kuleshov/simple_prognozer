@@ -23,12 +23,13 @@ INFECTION_LIMIT = 0.8
 
 
 def simple_method(reg):
-    # TODO: Add exceptions
     if len(reg["country"]) > 2:
         country = reg["country"].title().replace('-', ' ')
     else:
         country = 'US'
     region = MainTable.objects.filter(country_id__country=country)
+    if not region:
+        return 'Country not found'
     if reg["subdivision"]:
         sub = reg["subdivision"].title().replace('-', ' ')
         region = MainTable.objects.filter(country_id__country=country,
@@ -39,7 +40,10 @@ def simple_method(reg):
                                           subdivision_id__subdivision=sub,
                                           subdivision_id__admin2=admin2)
 
-    region_population = region[0].region_population
+    try:
+        region_population = region[0].region_population
+    except IndexError as err:
+        return f'Population not found: {err}'
     infections_limit = math.ceil(INFECTION_LIMIT * region_population)
 
     first_update = TimeSeries.objects.filter(country_id__country=country,
@@ -54,12 +58,3 @@ def simple_method(reg):
     end_date = now_date + (infections_limit - confirmed) / confirmed_per_day
     end_date = datetime.datetime.fromordinal(int(end_date))
     return end_date
-
-
-if __name__ == "__main__":
-    region = {
-        'country': 'russia',
-        'subdivision': 'moscow',
-        'admin2': None
-        }
-    print(simple_method(region))

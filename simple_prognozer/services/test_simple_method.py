@@ -41,8 +41,7 @@ class TestSimpeMethod(unittest.TestCase):
                               datetime.datetime)
 
     def test_neverland(self):
-        self.assertIsInstance(simple_method(self.neverland),
-                              str)
+        self.assertEqual(simple_method(self.neverland), 'Country not found')
 
 
 if __name__ == "__main__":
