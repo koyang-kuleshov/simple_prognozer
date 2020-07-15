@@ -81,39 +81,37 @@ class Command(BaseCommand):
             lambda x: x.date())
         df_result['Last_Update'] = pd.to_datetime(df_result['Last_Update'])
 
-        # удаляем дубликаты для US
-        df_result = df_result.drop_duplicates(subset=['FIPS',
-                                                      'Admin2',
-                                                      'Country_Region',
-                                                      'Province_State',
-                                                      'Last_Update'],
-                                              keep=False)
+        # заменяем nan на нули, т.к. в бд должны придти числа
+        df_result.fillna(
+            {
+                'Confirmed': 0,
+                'Deaths': 0,
+                'Recovered': 0
+            },
+            inplace=True)
 
-        df_by_country = df_result.groupby(
-            ['Last_Update', 'Country_Region', 'Province_State', 'Admin2',
-             'FIPS', 'Lat', 'Long_'],
-            as_index=False)[['Confirmed', 'Deaths', 'Recovered']].sum()
+        # заменяем оставшиеся nan на None для корректной записи в БД
+        df_result = df_result.where(df_result.notnull(), None)
 
         # получаем текущую зону для добавления к дате, что бы иключить ошибку
         current_tz = timezone.get_current_timezone()
 
         # переводим датафрейм в словарь
-        df_records = df_by_country.to_dict('records')
-
-        # создаем список объектов для записи в бд
+        df_records = df_result.to_dict('records')
 
         print('Filling TimeSeries...')
 
+        # создаем список объектов для записи в бд
         model_instances = [TimeSeries(
-            country=Country.objects.get(
-                country=record['Country_Region']),
+            country=Country.objects.get_or_create(
+                country=record['Country_Region'])[0],
             subdivision=Subdivision.objects.get_or_create(
-                country=Country.objects.get(
-                    country=record['Country_Region']),
-                    subdivision=record['Province_State'],
-                    fips=record['FIPS'],
-                    admin2=record['Admin2']
-                )[0],
+                        country=Country.objects.get(
+                                    country=record['Country_Region']),
+                        subdivision=record['Province_State'],
+                        fips=record['FIPS'],
+                        admin2=record['Admin2']
+                        )[0],
             last_update=current_tz.localize(record['Last_Update']),
             confirmed=record['Confirmed'],
             deaths=record['Deaths'],
@@ -124,3 +122,4 @@ class Command(BaseCommand):
         TimeSeries.objects.bulk_create(model_instances)
 
         print('TimeSeries fill done!')
+
