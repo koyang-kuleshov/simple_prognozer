@@ -16,6 +16,10 @@ class Subdivision(models.Model):
                                    max_length=128,
                                    null=True
                                    )
+    # Альтернативное название страны/региона для поиска кол-ва населения
+    alias_for_population = models.CharField(verbose_name='Alias',
+                                            max_length=128,
+                                            )
     # FIPS только для US
     fips = models.IntegerField(verbose_name='FIPS US inner number',
                                null=True
@@ -40,7 +44,8 @@ class Subdivision(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['admin2', 'country', 'fips'], name='uq_subdivison')
+            models.UniqueConstraint(fields=['admin2', 'country', 'fips'],
+                                    name='uq_subdivison')
         ]
 
 
@@ -83,30 +88,16 @@ class MainTable(models.Model):
                      null=True
                      )
 
-    # testing_rate = models.DecimalField(verbose_name='Testing rate',
-    #                                    max_digits=25,
-    #                                    decimal_places=16,
-    #                                    default=0
-    #                                    )
-    # hospitalization_rate = models. \
-    #     DecimalField(verbose_name='Hospitalization_rate',
-    #                  max_digits=25,
-    #                  decimal_places=16,
-    #                  default=0
-    #                  )
     region_population = models. \
         PositiveIntegerField(verbose_name='Region population',
                              default=0
                              )
-    # # 80% от region_population округляем в большую сторону
-    # region_limit = models.PositiveIntegerField(verbose_name='Region limit',
-    #                                            default=0
-    #                                            )
 
 
 class TimeSeries(models.Model):
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING)
-    subdivision = models.ForeignKey(Subdivision, on_delete=models.DO_NOTHING, null=True)
+    subdivision = models.ForeignKey(Subdivision, on_delete=models.DO_NOTHING,
+                                    null=True)
     last_update = models.DateTimeField()
     # Заболевшие
     confirmed = models.PositiveIntegerField(verbose_name='Confirmed',
