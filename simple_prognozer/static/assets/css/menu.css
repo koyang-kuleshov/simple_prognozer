@@ -359,11 +359,11 @@ h5.left-nav-title {
   -moz-transition: all 0.2s ease-out 0s;
   -webkit-transition: all 0.2s ease-out 0s;
   transition: all 0.2s ease-out 0s;
-  background: #7b1212;
+  background: #e5dada;
 }
 .toggle-btn:hover {
-  background: #7b1212;
-  color: rgba(210, 31, 31, 0.32);
+  background: #d9d7d7;
+  color: rgba(202, 241, 61, 0.32);
 }
 
 
