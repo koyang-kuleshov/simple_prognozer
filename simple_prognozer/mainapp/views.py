@@ -1,13 +1,7 @@
-import csv
-
-from django.views.generic import ListView
-
-from services import parse
-
 from django.shortcuts import render
 from django.db.models import Sum
 
-from mainapp.models import MainTable, Country, Subdivision, TimeSeries
+from mainapp.models import Country, TimeSeries
 
 
 def index(request):
