@@ -260,7 +260,7 @@ def france_pop():
         "French Polynesia": single_countries_pop()['French Polynesia'],
         "New Caledonia": single_countries_pop()['New Caledonia'],
         "Reunion": single_countries_pop()['Reunion'],
-        "Saint Barthelemy": single_countries_pop()['Saint Barthelemy'],
+        # "Saint Barthelemy": single_countries_pop()['Saint Barthelemy'],
         "Saint Pierre and Miquelon": single_countries_pop()['Saint Pierre and Miquelon'],
         "St Martin": single_countries_pop()['St Martin'],
         "null": single_countries_pop()['France']
