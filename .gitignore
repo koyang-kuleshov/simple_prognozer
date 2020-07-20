@@ -110,6 +110,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+secret_keys.py
+*.csv*
 
 # Spyder project settings
 .spyderproject
