@@ -347,6 +347,7 @@ h5.left-nav-title {
   content: '';
 }
 .toggle-btn {
+  display: none;
   width: 55px;
   height: 60px;
   line-height: 30px;
@@ -1110,6 +1111,7 @@ a.add-btn {
     display: inline-block;
   }*/
   .toggle-btn {
+    display: block;
     margin-left: 60px;
   }
   .body-content {
