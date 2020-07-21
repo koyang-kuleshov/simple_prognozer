@@ -1,17 +1,18 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 
-{% block sidebar-menu-list-nav %}
-
-{% endblock sidebar-menu-list-nav %}
+{% block chart-resources %}
+    <!-- Chart.js -->
+    <script src="{% static 'assets/js/chart_js/chart.min.js' %}"></script>
+{% endblock %}
 
 {% block header1 %}
     <h1 class="header-1">Header1</h1>
-{% endblock header1 %}
+{% endblock %}
 
 {% block header2 %}
     <h2 class="header-2">Header2</h2>
-{% endblock header2 %}
+{% endblock %}
 
 {% block chart-js %}
     <div id="container" style="width: 75%;">
@@ -19,58 +20,58 @@
         <canvas id="deathChart"></canvas>
         <canvas id="recoveredChart"></canvas>
     </div>
-{% endblock chart-js %}
+{% endblock %}
 
 {% block chart-js-script %}
     <script>
-            var config_confirmed = {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        data: {{ data_confirmed|safe }},
-                        label: 'Confirmed'
-                    }],
-                    labels: {{ labels|safe }}
-                },
-                options: {
-                    responsive: true
-                }
-            };
-            var config_deaths = {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        data: {{ data_deaths|safe }},
-                        label: 'Deaths'
-                    }],
-                    labels: {{ labels|safe }}
-                },
-                options: {
-                    responsive: true
-                }
-            };
-            var config_recovered = {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        data: {{ data_recovered|safe }},
-                        label: 'Recovered'
-                    }],
-                    labels: {{ labels|safe }}
-                },
-                options: {
-                    responsive: true
-                }
-            };
+        var config_confirmed = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: {{ data_confirmed|safe }},
+                    label: 'Confirmed'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+        var config_deaths = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: {{ data_deaths|safe }},
+                    label: 'Deaths'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+        var config_recovered = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: {{ data_recovered|safe }},
+                    label: 'Recovered'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
 
-            window.onload = function () {
-                var ctx = document.getElementById('confirmedChart').getContext('2d');
-                window.myPie = new Chart(ctx, config_confirmed);
-                var ctx_1 = document.getElementById('deathChart').getContext('2d');
-                window.myPie = new Chart(ctx_1, config_deaths);
-                var ctx_2 = document.getElementById('recoveredChart').getContext('2d');
-                window.myPie = new Chart(ctx_2, config_recovered);
-            };
-        </script>
-{% endblock chart-js-script %}
+        window.onload = function () {
+            var ctx = document.getElementById('confirmedChart').getContext('2d');
+            window.myPie = new Chart(ctx, config_confirmed);
+            var ctx_1 = document.getElementById('deathChart').getContext('2d');
+            window.myPie = new Chart(ctx_1, config_deaths);
+            var ctx_2 = document.getElementById('recoveredChart').getContext('2d');
+            window.myPie = new Chart(ctx_2, config_recovered);
+        };
+    </script>
+{% endblock %}
 
