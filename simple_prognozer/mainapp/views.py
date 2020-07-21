@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 
 from mainapp.models import Country, TimeSeries
 
@@ -29,3 +30,14 @@ def index(request):
         'countries': countries,
     }
     return render(request, 'mainapp/index.html', context)
+
+
+def country_page(request, pk):
+    country = get_object_or_404(Country, pk=pk)
+    countries = Country.objects.all()
+
+    context = {
+        'country_name': country.country,
+        'countries': countries,
+    }
+    return render(request, 'mainapp/country_page.html', context)

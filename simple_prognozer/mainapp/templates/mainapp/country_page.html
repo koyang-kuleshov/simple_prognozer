@@ -1,14 +1,16 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 
-<!--header1 start-->
+{% block sidebar-menu-list-nav %}
+    <li>
+        <a href="{% url 'mainapp:index' %}">To index</a>
+    </li>
+{% endblock sidebar-menu-list-nav %}
+
 {% block header1 %}
     <h1 class="header-1">Header1</h1>
-{% endblock %}
-<!--header1 end-->
+{% endblock header1 %}
 
-<!--header2 start-->
 {% block header2 %}
-    <h2 class="header-2">Header2</h2>
-{% endblock %}
-<!--header2 end-->
+    <h2 class="header-2">{{ country_name }}</h2>
+{% endblock header2 %}
