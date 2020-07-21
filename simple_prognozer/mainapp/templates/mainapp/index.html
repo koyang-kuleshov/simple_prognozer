@@ -1,6 +1,18 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 
+{% block sidebar-menu-list-nav %}
+    <li class="menu-list"><a href="#"><i class="mdi mdi-map" aria-hidden="true"></i><span>Страны</span></a>
+        <ul class="child-list">
+
+            {% for country in countries %}
+            <li><a href="#">{{ country.country }}</a></li>
+            {% endfor %}
+
+        </ul>
+    </li>
+{% endblock %}
+
 <!--header1 start-->
 {% block header1 %}
     <h1 class="header-1">Header1</h1>
