@@ -1,14 +1,13 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from mainapp.models import TimeSeries, Country, Subdivision, MainTable
+from mainapp.models import TimeSeries, Country, Subdivision, MainTable, Continent
 
 import csv
 import requests
 
 from github.MainClass import Github
 import pandas as pd
-
-from simple_prognozer.secret_keys import TOKEN
+import pycountry_convert as pc
 
 
 REPO_PATH = 'CSSEGISandData/COVID-19'
@@ -37,8 +36,46 @@ def get_csv(file_name):
         csv_file.close()
 
 
+def get_continent(country_name):
+    continents = {'AF': 'Africa',
+                  'AS': 'Asia',
+                  'EU': 'Europe',
+                  'NA': 'North America',
+                  'OC': 'Australia and Oceania',
+                  'SA': 'South America'}
+
+    if country_name == 'US':
+        return continents['NA']
+    elif country_name == 'Burma':
+        return continents['AS']
+    elif country_name[:5] == 'Congo':
+        return continents['AF']
+    elif country_name == "Cote d'Ivoire":
+        return continents['AF']
+    elif country_name == 'Diamond Princess':
+        return continents['NA']
+    elif country_name == 'MS Zaandam':
+        return continents['NA']
+    elif country_name == 'Holy See':
+        return continents['EU']
+    elif country_name == 'Korea, South':
+        return continents['AS']
+    elif country_name == 'Kosovo':
+        return continents['EU']
+    elif country_name == 'Taiwan*':
+        return continents['AS']
+    elif country_name == 'West Bank and Gaza':
+        return continents['AS']
+    elif country_name == 'Western Sahara':
+        return continents['AF']
+    elif country_name == 'Timor-Leste':
+        return continents['OC']
+    else:
+        return continents[(pc.country_alpha2_to_continent_code(pc.country_name_to_country_alpha2(country_name)))]
+
+
 class Command(BaseCommand):
-    help = 'Fill db'
+    help = 'Fill db'  
 
     def handle(self, *args, **kwargs):
         """ Запись Daily_Reports в таблицу MainTable """
@@ -50,11 +87,9 @@ class Command(BaseCommand):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if Country.objects.filter(country=row[3]).exists():
-                    country = Country.objects.get(country=row[3])
-                else:
-                    country = Country(country=row[3])
-                    country.save()
+                continent, _ = Continent.objects.get_or_create(continent=get_continent(row[3]))
+
+                country, _ = Country.objects.get_or_create(country=row[3], continent=continent)
 
                 subdivision, _ = Subdivision.objects.\
                     get_or_create(country=country,
@@ -77,7 +112,6 @@ class Command(BaseCommand):
                                   'active': row[10] or None,
                                   'last_update': row[4],
                                   'incidence_rate': row[12] or None,
-                                  # FIX: mainapp.models.MultipleObjectsReturned: get() returned more than one MainTable -- it returned 2!
                                   'case_fatality_ratio': row[13] or None
                                   }
                             )
