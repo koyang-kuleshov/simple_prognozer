@@ -60,6 +60,8 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+config.py
+db.json
 
 # Flask stuff:
 instance/
@@ -109,6 +111,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+secret_keys.py
+*.csv*
 
 # Spyder project settings
 .spyderproject
@@ -127,3 +131,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+/simple_prognozer/services/get_population_error.json
+/.idea/
