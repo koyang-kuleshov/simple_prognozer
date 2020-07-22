@@ -1,0 +1,119 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block chart-resources %}
+    <!-- Resources -->
+    <script src="{% static 'assets/js/amcharts/core.js' %}"></script>
+    <script src="{% static 'assets/js/amcharts/charts.js' %}"></script>
+    <script src="{% static 'assets/js/amcharts/material.js' %}"></script>
+    <script src="{% static 'assets/js/amcharts/animated.js' %}"></script>
+{% endblock %}
+
+{% block sidebar-menu-list-nav %}
+    <li>
+        <a href="{% url 'mainapp:index' %}">To index</a>
+    </li>
+{% endblock %}
+
+{% block header1 %}
+    <h1 class="header-1">Header1</h1>
+{% endblock %}
+
+{% block header2 %}
+    <h2 class="header-2">{{ country_name }}</h2>
+{% endblock %}
+
+{% block chart-js %}
+
+    <!-- Styles -->
+    <style>
+    #chartdiv {
+      width: 100%;
+      height: 500px;
+    }
+
+    </style>
+    <!-- HTML -->
+    <div id="chartdiv"></div>
+    <div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+{% endblock %}
+
+{% block chart-js-script %}
+
+    <!-- Chart code -->
+    <script>
+        am4core.ready(function() {
+
+        // Themes begin
+        am4core.useTheme(am4themes_material);
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+        chart.data = {{ chart_data|safe }};
+
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.tooltip.disabled = true;
+
+        var series = chart.series.push(new am4charts.LineSeries());
+        series.dataFields.dateX = "date";
+        series.name = "confirmed";
+        series.dataFields.valueY = "confirmed";
+        series.tooltipHTML = "<img src='{% static 'img/sick.png' %}' style='vertical-align:bottom; margin-right: 10px; width:28px; height:21px;'><span style='font-size:14px; color:#000000;'><b>{valueY.value}</b></span>";
+        series.tooltipText = "[#000]{valueY.value}[/]";
+        series.tooltip.background.fill = am4core.color("#FFF");
+        series.tooltip.getStrokeFromObject = true;
+        series.tooltip.background.strokeWidth = 3;
+        series.tooltip.getFillFromObject = false;
+        series.fillOpacity = 0.6;
+        series.strokeWidth = 2;
+        series.stacked = true;
+
+        var series2 = chart.series.push(new am4charts.LineSeries());
+        series2.name = "recovered";
+        series2.dataFields.dateX = "date";
+        series2.dataFields.valueY = "recovered";
+        series2.tooltipHTML = "<img src='{% static 'img/glitter.png' %}' style='vertical-align:bottom; margin-right: 10px; width:28px; height:21px;'><span style='font-size:14px; color:#000000;'><b>{valueY.value}</b></span>";
+        series2.tooltipText = "[#000]{valueY.value}[/]";
+        series2.tooltip.background.fill = am4core.color("#FFF");
+        series2.tooltip.getFillFromObject = false;
+        series2.tooltip.getStrokeFromObject = true;
+        series2.tooltip.background.strokeWidth = 3;
+        series2.sequencedInterpolation = true;
+        series2.fillOpacity = 0.6;
+        series2.stacked = true;
+        series2.strokeWidth = 2;
+
+        var series3 = chart.series.push(new am4charts.LineSeries());
+        series3.name = "deaths";
+        series3.dataFields.dateX = "date";
+        series3.dataFields.valueY = "deaths";
+        series3.tooltipHTML = "<img src='{% static 'img/dead.png' %}' style='vertical-align:bottom; margin-right: 10px; width:28px; height:21px;'><span style='font-size:14px; color:#000000;'><b>{valueY.value}</b></span>";
+
+
+        series3.tooltipText = "[#000]{valueY.value}[/]";
+        series3.tooltip.background.fill = am4core.color("#FFF");
+        series3.tooltip.getFillFromObject = false;
+        series3.tooltip.getStrokeFromObject = true;
+        series3.tooltip.background.strokeWidth = 3;
+        series3.sequencedInterpolation = true;
+        series3.fillOpacity = 0.6;
+        series3.defaultState.transitionDuration = 1000;
+        series3.stacked = true;
+        series3.strokeWidth = 2;
+
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.xAxis = dateAxis;
+        chart.scrollbarX = new am4core.Scrollbar();
+
+        // Add a legend
+        chart.legend = new am4charts.Legend();
+        chart.legend.position = "top";
+
+        }); // end am4core.ready()
+    </script>
+{% endblock %}

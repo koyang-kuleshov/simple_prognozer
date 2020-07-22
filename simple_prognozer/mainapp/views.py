@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.shortcuts import get_object_or_404
 
 from mainapp.models import Country, TimeSeries
 
@@ -10,7 +11,7 @@ def index(request):
     data_deaths = []
     data_recovered = []
 
-    queryset = TimeSeries.objects.all().values('last_update').\
+    queryset = TimeSeries.objects.all().values('last_update'). \
         annotate(Sum('confirmed'), Sum('deaths'), Sum('recovered'))
 
     for day in queryset:
@@ -29,3 +30,29 @@ def index(request):
         'countries': countries,
     }
     return render(request, 'mainapp/index.html', context)
+
+
+def country_page(request, pk):
+    country = get_object_or_404(Country, pk=pk)
+    countries = Country.objects.all()
+
+    queryset = TimeSeries.objects.filter(country_id=pk).values('last_update'). \
+        annotate(Sum('confirmed'), Sum('deaths'), Sum('recovered'))
+
+    chart_data = [
+        {
+            "date": day['last_update'].strftime('%m-%d'),
+            "confirmed": day['confirmed__sum'],
+            "recovered": day['recovered__sum'],
+            "deaths": day['deaths__sum'],
+        }
+        for day in queryset
+    ]
+
+    context = {
+        'country_name': country.country,
+        'countries': countries,
+        'chart_data': chart_data,
+    }
+
+    return render(request, 'mainapp/country_page.html', context)
