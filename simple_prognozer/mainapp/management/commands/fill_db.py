@@ -9,6 +9,8 @@ from github.MainClass import Github
 import pandas as pd
 import pycountry_convert as pc
 
+from simple_prognozer.secret_keys import TOKEN
+
 
 REPO_PATH = 'CSSEGISandData/COVID-19'
 GIT = Github(TOKEN)
