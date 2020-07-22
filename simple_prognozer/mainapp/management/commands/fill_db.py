@@ -4,11 +4,15 @@ from mainapp.models import TimeSeries, Country, Subdivision, MainTable
 
 import csv
 import requests
+import os
+import sys
 
 from github.MainClass import Github
 import pandas as pd
 
-from simple_prognozer.secret_keys import TOKEN
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# sys.path.insert(0, BASE_DIR)
+from simple_prognozer.config import TOKEN
 
 
 REPO_PATH = 'CSSEGISandData/COVID-19'
