@@ -1,15 +1,16 @@
+import csv
+import re
+import requests
+import codecs
+
+from datetime import datetime
+from github.MainClass import Github
+from contextlib import closing
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from mainapp.models import TimeSeries, Country, Subdivision, MainTable
-
-import csv
-import requests
-
-from github.MainClass import Github
-import pandas as pd
 
 from simple_prognozer.secret_keys import TOKEN
-
+from mainapp.models import TimeSeries, Country, Subdivision, MainTable
 
 REPO_PATH = 'CSSEGISandData/COVID-19'
 GIT = Github(TOKEN)
@@ -27,9 +28,10 @@ def get_csv(file_name):
     daily_reports_file_list = REPO.get_contents(DR_REPO_FILE_LIST)
 
     if file_name == 'daily_reports':
-        daily_reports_file_path = DAILY_REPORTS_DIR_PATH +\
-            str(daily_reports_file_list[-2]).split('/')[-1].split(".")[
-                0] + '.csv'
+        daily_reports_file_path = DAILY_REPORTS_DIR_PATH + \
+                                  str(daily_reports_file_list[-2]).split('/')[
+                                      -1].split(".")[
+                                      0] + '.csv'
         req = requests.get(daily_reports_file_path)
         url_content = req.content
         csv_file = open('daily_report.csv', 'wb')
@@ -37,12 +39,17 @@ def get_csv(file_name):
         csv_file.close()
 
 
-class Command(BaseCommand):
-    help = 'Fill db'
+def get_or_none(model, *args, **kwargs):
+    """метод возвращает None, если запись не найдена в таблице"""
+    try:
+        return model.objects.get(*args, **kwargs)
+    except model.DoesNotExist:
+        return None
 
-    def handle(self, *args, **kwargs):
-        """ Запись Daily_Reports в таблицу MainTable """
+""" Запись Daily_Reports в таблицу MainTable """
 
+
+"""
         print('Filling MainTable...')
 
         get_csv('daily_reports')
@@ -82,7 +89,146 @@ class Command(BaseCommand):
                                   }
                             )
         print('MainTable fill done!')
+"""
 
+
+class Command(BaseCommand):
+    help = 'Fill db'
+
+    def handle(self, *args, **kwargs):
+
+        # очистка таблицы
+        TimeSeries.objects.all().delete()
+        # настройки для подключения к github
+        repo_path = 'CSSEGISandData/COVID-19'
+        dr_repo_file_list = 'csse_covid_19_data/csse_covid_19_time_series'
+
+        # подключаемся
+        git = Github(TOKEN)
+        repo = git.get_repo(repo_path)
+
+        # получаем список временных рядов
+        time_series_file_list = repo.get_contents(dr_repo_file_list)[3:]
+        # перебираем по одному
+        for time_series_file in time_series_file_list:
+            # получаем данные с помощью запроса
+            print(time_series_file.download_url)
+            with closing(requests.get(time_series_file.download_url,
+                                      stream=True)) as r:
+
+
+                # загружаем при помощи reader, декодируя данные
+                reader = csv.reader(codecs.iterdecode(r.iter_lines(), 'utf-8'))
+
+                # получаем текущую зону для добавления к дате,
+                # что бы иключить ошибку при записи в БД
+                current_tz = timezone.get_current_timezone()
+                # собираем заголовки в отдельный список
+                headers = next(reader)
+
+                pattern = r".*time_series_covid19_(\w*)_\w*"
+                type_data = re.search(pattern, time_series_file.download_url)
+                print(type_data[1])
+
+                # перебираем данные построчно
+                for row in reader:
+                    # получаем страну или None
+                    country = get_or_none(Country, country=row[7])
+
+                    # если есть fips, преобразуем его в int
+                    if row[4]:
+                        fips = int(float(row[4]))
+
+                    # получаем subdivision или None
+                    subdivision = get_or_none(Subdivision,
+                                              country=country,
+                                              subdivision=row[6],
+                                              fips=fips,
+                                              admin2=row[5]
+                                              )
+                    # создаем пустой список для объектов
+                    model_instances = []
+
+                    if type_data[1] == 'confirmed':
+                        # если страна и subdivision не None
+                        if country and subdivision:
+                            # берем только даты из заголовков
+                            dates = headers[11:]
+                            # перебираем строку
+                            for num, record in enumerate(row[11:]):
+                                # преобразуем запись из таблицы в datetime
+                                # и добавляем зону для корректной записи в БД
+                                last_update = current_tz.localize(
+                                    datetime.strptime(dates[num], '%m/%d/%y')
+                                )
+                                # добавляем объект в список для записи в бд
+                                model_instances.append(
+                                    TimeSeries(
+                                        country=country,
+                                        subdivision=subdivision,
+                                        last_update=last_update,
+                                        confirmed=record
+                                    )
+                                )
+
+                            # записываем данные в таблицу
+                            TimeSeries.objects.bulk_create(model_instances)
+
+                    elif type_data[1] == 'deaths':
+                        # если страна и subdivision не None
+                        if country and subdivision:
+                            # берем только даты из заголовков
+                            dates = headers[11:]
+                            # перебираем строку
+                            for num, record in enumerate(row[11:]):
+                                # преобразуем запись из таблицы в datetime
+                                # и добавляем зону для корректной записи в БД
+                                last_update = current_tz.localize(
+                                    datetime.strptime(dates[num],
+                                                      '%m/%d/%y')
+                                )
+                                # добавляем объект в список для записи в бд
+                                model_instances.append(
+                                    TimeSeries(
+                                        country=country,
+                                        subdivision=subdivision,
+                                        last_update=last_update,
+                                        deaths=record
+                                    )
+                                )
+
+                            # записываем данные в таблицу
+                            TimeSeries.objects.bulk_create(model_instances)
+
+                    else:
+                        # если страна и subdivision не None
+                        if country and subdivision:
+                            # берем только даты из заголовков
+                            dates = headers[11:]
+                            # перебираем строку
+                            for num, record in enumerate(row[11:]):
+                                # преобразуем запись из таблицы в datetime
+                                # и добавляем зону для корректной записи в БД
+                                last_update = current_tz.localize(
+                                    datetime.strptime(dates[num],
+                                                      '%m/%d/%y')
+                                )
+                                # добавляем объект в список для записи в бд
+                                model_instances.append(
+                                    TimeSeries(
+                                        country=country,
+                                        subdivision=subdivision,
+                                        last_update=last_update,
+                                        recovered=record
+                                    )
+                                )
+
+                            # записываем данные в таблицу
+                            TimeSeries.objects.bulk_create(
+                                model_instances)
+
+
+'''
         print('Getting TimeSeries data frame')
         # получаем список только отчетов
         daily_reports_file_list = REPO.get_contents(DR_REPO_FILE_LIST)[1:-1]
@@ -188,3 +334,4 @@ class Command(BaseCommand):
         TimeSeries.objects.bulk_create(model_instances)
 
         print('Fill database done!')
+'''
