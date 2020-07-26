@@ -16,10 +16,22 @@ REPO_PATH = 'CSSEGISandData/COVID-19'
 GIT = Github(TOKEN)
 REPO = GIT.get_repo(REPO_PATH)
 DR_REPO_FILE_LIST = 'csse_covid_19_data/csse_covid_19_daily_reports'
+DR_REPO_TS_FILE_LIST = 'csse_covid_19_data/csse_covid_19_time_series'
 DAILY_REPORTS_DIR_PATH = ('https://github.com/CSSEGISandData/COVID-19/raw/'
                           'master/csse_covid_19_data'
                           '/csse_covid_19_daily_reports/'
                           )
+
+# так как набор столбцов различается, создадим словарь
+# в котором привяжем таблицу к столбцам, так же укажем тип
+# получаемых данных
+TS_PARAMS = {
+    'confirmed_US': [7, 4, 5, 6, 8, 9, 11, 'confirmed'],
+    'deaths_US': [7, 4, 5, 6, 8, 9, 12, 'deaths'],
+    'confirmed_global': [1, None, None, 0, 2, 3, 4, 'confirmed'],
+    'deaths_global': [1, None, None, 0, 2, 3, 4, 'deaths'],
+    'recovered_global': [1, None, None, 0, 2, 3, 4, 'recovered'],
+}
 
 
 def get_csv(file_name):
@@ -47,9 +59,13 @@ def get_or_none(model, *args, **kwargs):
         return None
 
 
-""" Запись Daily_Reports в таблицу MainTable """
+class Command(BaseCommand):
+    help = 'Fill db'
 
-"""
+    def handle(self, *args, **kwargs):
+        """ Запись Daily_Reports в таблицу MainTable """
+
+
         print('Filling MainTable...')
 
         get_csv('daily_reports')
@@ -89,38 +105,23 @@ def get_or_none(model, *args, **kwargs):
                                   }
                             )
         print('MainTable fill done!')
-"""
-
-
-class Command(BaseCommand):
-    help = 'Fill db'
-
-    def handle(self, *args, **kwargs):
 
         # очистка таблицы
         TimeSeries.objects.all().delete()
-        # настройки для подключения к github
-        repo_path = 'CSSEGISandData/COVID-19'
-        dr_repo_file_list = 'csse_covid_19_data/csse_covid_19_time_series'
 
-        # подключаемся
-        git = Github(TOKEN)
-        repo = git.get_repo(repo_path)
+        # получаем список временных рядов в репозитории
+        time_series_file_list = REPO.get_contents(DR_REPO_TS_FILE_LIST)[3:]
 
-        ts_params = {
-            'confirmed_US': [7, 4, 5, 6, 11, 'confirmed'],
-            'deaths_US': [7, 4, 5, 6, 12, 'deaths'],
-            'confirmed_global': [1, None, 0, None, 4, 'confirmed'],
-            'deaths_global': [1, None, 0, None, 4, 'deaths'],
-            'recovered_global': [1, None, 0, None, 4, 'recovered'],
-        }
-
-        # получаем список временных рядов
-        time_series_file_list = repo.get_contents(dr_repo_file_list)[3:]
+        # зададим счетчик по которму разграничим создание таблиц
+        # при обработке confirmed данных и
+        # обновление при обработке deaths и recovered данных
+        confirmed_table = 0
 
         # перебираем по одному
         for time_series_file in time_series_file_list:
+            confirmed_table += 1
             # получаем данные с помощью запроса
+            print('Getting TimeSeries')
             print(time_series_file.download_url)
             with closing(requests.get(time_series_file.download_url,
                                       stream=True)) as r:
@@ -131,26 +132,43 @@ class Command(BaseCommand):
                 # получаем текущую зону для добавления к дате,
                 # что бы иключить ошибку при записи в БД
                 current_tz = timezone.get_current_timezone()
+
                 # собираем заголовки в отдельный список
                 headers = next(reader)
 
+                # парсим нахвание файла в url что бы понять
+                # к какому типу данных отностится таблица и
+                # является глобальной или USA
                 pattern = r".*time_series_covid19_(\w*_\w*).\w*"
-                ts_type_data = re.search(pattern, time_series_file.download_url)
+                ts_type_data = re.search(pattern,
+                                         time_series_file.download_url)
 
-                country_index, fips_index, admin2_index, subdivision_index,\
-                start_date_index, type_data = ts_params[ts_type_data[1]]
+                # распаковываем индексы столбцов по переменным
+                country_index, fips_index, admin2_index, subdivision_index, \
+                lat_index, long_index, start_date_index, \
+                type_data = TS_PARAMS[ts_type_data[1]]
 
+                models_instances = []
+
+                print('Filling TimeSeries...')
                 # перебираем данные построчно
                 for row in reader:
                     # получаем страну или None
                     country = get_or_none(Country, country=row[country_index])
 
                     # если есть fips, преобразуем его в int
+                    # если нет то None
                     if fips_index and row[fips_index]:
                         fips = int(float(row[fips_index]))
+                    else:
+                        fips = None
 
+                    # если есть admin2_index, берем значение
+                    # если нет то None
                     if admin2_index:
                         admin2 = row[admin2_index]
+                    else:
+                        admin2 = None
 
                     # получаем subdivision или None
                     subdivision = get_or_none(
@@ -158,116 +176,63 @@ class Command(BaseCommand):
                         country=country,
                         subdivision=row[subdivision_index],
                         fips=fips,
-                        admin2=admin2
-                        )
+                        admin2=admin2,
+                        # China Hebei с разными lat и longitude
+                        # в разных таблицах
+                        # lat=row[lat_index],
+                        # longitude=row[long_index]
+                    )
 
+                    # если страна и subdivision не None
+                    if country and subdivision:
+                        # берем только даты из заголовков
+                        dates = headers[start_date_index:]
+                        # перебираем строку
+                        for num, record in enumerate(row[start_date_index:]):
+                            # преобразуем запись из таблицы в datetime
+                            # и добавляем зону для корректной записи в БД
+                            last_update = current_tz.localize(
+                                datetime.strptime(dates[num], '%m/%d/%y')
+                            )
 
+                            # создадим словарь с ключем в зависимости
+                            # от типа таблицы (confirmed, deaths, recovered)
+                            # и значением показателя за этот день
+                            values = dict.fromkeys([type_data], record)
+                            # если мы обрабатываем первые 2 таблицы confirmed
+                            if confirmed_table < 3:
+                                # создаем экземпляр и добавляем в список
+                                models_instances.append(
+                                    TimeSeries(
+                                        country=country,
+                                        subdivision=subdivision,
+                                        last_update=last_update,
+                                        **values
+                                    )
+                                )
+                            # иначе мы обрабатываем deaths или recovered
+                            else:
+                                # получаем из бд запись
+                                event = TimeSeries.objects.get(
+                                    country=country,
+                                    subdivision=subdivision,
+                                    last_update=last_update,
+                                )
+                                # обновляем значение deaths или recovered
+                                setattr(event, type_data, record)
+                                # добавляем в список
+                                models_instances.append(event)
 
-
-'''
-        print('Getting TimeSeries data frame')
-        # получаем список только отчетов
-        daily_reports_file_list = REPO.get_contents(DR_REPO_FILE_LIST)[1:-1]
-
-        # создаем пустой фрейм для наполнения
-        df_result = pd.DataFrame(columns=['Last_Update',
-                                          'FIPS',
-                                          'Admin2',
-                                          'Province_State',
-                                          'Country_Region',
-                                          'Lat',
-                                          'Long_',
-                                          'Confirmed',
-                                          'Deaths',
-                                          'Recovered',
-                                          ])
-
-        # перебираем отчеты по одному
-        for report in daily_reports_file_list:
-            # загружаем отчет в датафрейм
-            df = pd.read_csv(report.download_url)
-
-            # исправляем разночтения в названиях столбцов
-            if {'Last Update'}.issubset(df.columns):
-                df.rename(
-                    columns={'Latitude': 'Lat', 'Longitude': 'Long_',
-                             'Province/State': 'Province_State',
-                             'Country/Region': 'Country_Region',
-                             'Last Update': 'Last_Update'},
-                    inplace=True)
-
-            # вставляем отчет в общий дата фрейм
-            df_result = pd.concat([df_result, df])
-
-        # исправляем разные названия одной страны
-        df_result.loc[df_result['Country_Region'] ==
-                      'Mainland China', 'Country_Region'] = 'China'
-        df_result.loc[df_result['Country_Region'] ==
-                      ' Azerbaijan', 'Country_Region'] = 'Azerbaijan'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Gambia, The', 'Country_Region'] = 'Gambia'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Hong Kong SAR', 'Country_Region'] = 'China'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Hong Kong', 'Country_Region'] = 'China'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Iran (Islamic Republic of)', 'Country_Region'] = 'Iran'
-        df_result.loc[df_result['Country_Region'] ==
-                      'South Korea', 'Country_Region'] = 'Korea, South'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Republic of Korea', 'Country_Region'] = 'Korea, South'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Russian Federation', 'Country_Region'] = 'Russia'
-        df_result.loc[df_result['Country_Region'] ==
-                      'UK', 'Country_Region'] = 'United Kingdom'
-        df_result.loc[df_result['Country_Region'] ==
-                      'Taiwan', 'Country_Region'] = 'Taiwan*'
-
-        # исправляем разные форматы дат
-        df_result['Last_Update'] = pd.to_datetime(df_result['Last_Update'])
-        df_result['Last_Update'] = df_result['Last_Update'].apply(
-            lambda x: x.date())
-        df_result['Last_Update'] = pd.to_datetime(df_result['Last_Update'])
-
-        # заменяем nan на нули, т.к. в бд должны придти числа
-        df_result.fillna(
-            {
-                'Confirmed': 0,
-                'Deaths': 0,
-                'Recovered': 0
-            },
-            inplace=True)
-
-        # заменяем оставшиеся nan на None для корректной записи в БД
-        df_result = df_result.where(df_result.notnull(), None)
-
-        # получаем текущую зону для добавления к дате, что бы иключить ошибку
-        current_tz = timezone.get_current_timezone()
-
-        # переводим датафрейм в словарь
-        df_records = df_result.to_dict('records')
-
-        print('Filling TimeSeries...')
-
-        # создаем список объектов для записи в бд
-        model_instances = [TimeSeries(
-            country=Country.objects.get_or_create(
-                country=record['Country_Region'])[0],
-            subdivision=Subdivision.objects.get_or_create(
-                country=Country.objects.get(
-                    country=record['Country_Region']),
-                subdivision=record['Province_State'],
-                fips=record['FIPS'],
-                admin2=record['Admin2']
-            )[0],
-            last_update=current_tz.localize(record['Last_Update']),
-            confirmed=record['Confirmed'],
-            deaths=record['Deaths'],
-            recovered=record['Recovered'],
-        ) for record in df_records]
-
-        # записываем данные в таблицу
-        TimeSeries.objects.bulk_create(model_instances)
+                # если мы обрабатываем первые 2 таблицы confirmed
+                if confirmed_table < 3:
+                    # создаем записи в таблице
+                    TimeSeries.objects.bulk_create(models_instances)
+                    print(f'Fill {ts_type_data[1]} done!')
+                # иначе мы обрабатываем deaths или recovered
+                else:
+                    # обновляем данные deaths или recovered
+                    TimeSeries.objects.bulk_update(models_instances,
+                                                   [type_data])
+                    print(f'Fill {ts_type_data[1]} done!')
 
         print('Fill database done!')
-'''
