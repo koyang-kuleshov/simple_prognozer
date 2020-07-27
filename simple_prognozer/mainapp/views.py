@@ -22,12 +22,24 @@ def index(request):
 
     countries = Country.objects.all()
 
+    # {"confirmed": 555, "deaths": 17, "recovered": 28, "date": "2020-01-22"}
+    covid_total_timeline = [
+        {
+            "confirmed": day['confirmed__sum'],
+            "deaths": day['deaths__sum'],
+            "recovered": day['recovered__sum'],
+            "date": day['last_update'].strftime('%Y-%m-%d')
+        }
+        for day in queryset
+    ]
+
     context = {
         'labels': labels,
         'data_confirmed': data_confirmed,
         'data_deaths': data_deaths,
         'data_recovered': data_recovered,
         'countries': countries,
+        'covid_total_timeline': covid_total_timeline,
     }
     return render(request, 'mainapp/index.html', context)
 
