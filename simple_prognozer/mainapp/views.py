@@ -48,6 +48,7 @@ def country_page(request, pk):
         }
         for day in queryset
     ]
+    print(chart_data)
 
     context = {
         'country_name': country.country,
