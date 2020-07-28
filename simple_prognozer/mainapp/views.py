@@ -22,13 +22,31 @@ def index(request):
 
     countries = Country.objects.all()
 
-    # {"confirmed": 555, "deaths": 17, "recovered": 28, "date": "2020-01-22"}
     covid_total_timeline = [
         {
             "confirmed": day['confirmed__sum'],
             "deaths": day['deaths__sum'],
             "recovered": day['recovered__sum'],
             "date": day['last_update'].strftime('%Y-%m-%d')
+        }
+        for day in queryset
+    ]
+
+    # [{"date":"2020-01-22","list":[{"confirmed":0,"deaths":0,"recovered":0,"id":"TV"}
+    covid_world_timeline = [
+        {
+            "date": day['last_update'].strftime('%Y-%m-%d'),
+            "list": [
+                {
+                    "confirmed": data['confirmed__sum'],
+                    "deaths": data['deaths__sum'],
+                    "recovered": data['recovered__sum'],
+                    "id": data['country__iso_alpha_2']
+                }
+                for data in
+                TimeSeries.objects.filter(last_update=day['last_update']).values('country__iso_alpha_2').
+                    annotate(Sum('confirmed'), Sum('deaths'), Sum('recovered'))
+            ]
         }
         for day in queryset
     ]
@@ -40,7 +58,9 @@ def index(request):
         'data_recovered': data_recovered,
         'countries': countries,
         'covid_total_timeline': covid_total_timeline,
+        'covid_world_timeline': covid_world_timeline,
     }
+
     return render(request, 'mainapp/index.html', context)
 
 

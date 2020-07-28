@@ -6,6 +6,11 @@ class Country(models.Model):
                                max_length=128,
                                unique=True
                                )
+    # Двухбуквенный код страны
+    iso_alpha_2 = models.CharField(verbose_name='ISO 2',
+                                   max_length=2,
+                                   null=True
+                                   )
 
 
 class Subdivision(models.Model):

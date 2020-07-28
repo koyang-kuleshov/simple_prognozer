@@ -1,5 +1,7 @@
 import csv
 import re
+
+import pycountry
 import requests
 import codecs
 
@@ -9,9 +11,10 @@ from contextlib import closing
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from simple_prognozer.secret_keys import TOKEN
+# from simple_prognozer.secret_keys import TOKEN
 from mainapp.models import TimeSeries, Country, Subdivision, MainTable
 
+TOKEN = '0c58cbecd5c2c733875f5dcfc5fd896328433267'
 REPO_PATH = 'CSSEGISandData/COVID-19'
 GIT = Github(TOKEN)
 REPO = GIT.get_repo(REPO_PATH)
@@ -236,3 +239,34 @@ class Command(BaseCommand):
                     print(f'Fill {ts_type_data[1]} done!')
 
         print('Fill database done!')
+
+        print('Filling Countries ISO 2 codes...')
+        all_contries = (Country.objects.all().values('country'))
+        for country in all_contries:
+            try:
+                Country.objects.filter(country=country['country']) \
+                    .update(iso_alpha_2=pycountry.countries.get(name=country['country']).alpha_2)
+            except:
+                pass
+
+        Country.objects.filter(country='US').update(iso_alpha_2='US')
+        Country.objects.filter(country='Russia').update(iso_alpha_2='RU')
+        Country.objects.filter(country='Bolivia').update(iso_alpha_2='BO')
+        Country.objects.filter(country='Brunei').update(iso_alpha_2='BN')
+        Country.objects.filter(country='Burma').update(iso_alpha_2='MM')
+        Country.objects.filter(country='Congo (Kinshasa)').update(iso_alpha_2='CD')
+        Country.objects.filter(country='Congo (Brazzaville)').update(iso_alpha_2='CG')
+        Country.objects.filter(country="Cote d'Ivoire").update(iso_alpha_2='CI')
+        Country.objects.filter(country='Holy See').update(iso_alpha_2='VA')
+        Country.objects.filter(country='Iran').update(iso_alpha_2='IR')
+        Country.objects.filter(country='Korea, South').update(iso_alpha_2='KR')
+        Country.objects.filter(country='Kosovo').update(iso_alpha_2='XK')
+        Country.objects.filter(country='Laos').update(iso_alpha_2='LA')
+        Country.objects.filter(country='Moldova').update(iso_alpha_2='MD')
+        Country.objects.filter(country='Syria').update(iso_alpha_2='SY')
+        Country.objects.filter(country='Taiwan*').update(iso_alpha_2='TW')
+        Country.objects.filter(country='Tanzania').update(iso_alpha_2='TZ')
+        Country.objects.filter(country='Venezuela').update(iso_alpha_2='VE')
+        Country.objects.filter(country='Vietnam').update(iso_alpha_2='VN')
+        Country.objects.filter(country='West Bank and Gaza').update(iso_alpha_2='PS')
+        print('Fill Countries ISO 2 codes done!')

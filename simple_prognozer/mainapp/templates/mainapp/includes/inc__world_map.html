@@ -14,7 +14,7 @@
 <script src="{% static 'assets/js/amcharts/charts.js' %}"></script>
 <script src="{% static 'assets/js/amcharts/maps.js' %}"></script>
 <script src="{% static 'assets/js/amcharts/worldLow.js' %}"></script>
-<script src="https://covid.amCharts.com/data/js/world_timeline.js"></script>
+{#<script src="https://covid.amCharts.com/data/js/world_timeline.js"></script>#}
 <script src="{% static 'assets/js/amcharts/kelly.js' %}"></script>
 <script src="{% static 'assets/js/amcharts/animated.js' %}"></script>
 
@@ -50,6 +50,7 @@ am4core.ready(function() {
   var currentCountry = "World";
 
   let covid_total_timeline = {{ covid_total_timeline|safe }};
+  let covid_world_timeline = {{ covid_world_timeline|safe }};
 
   // last date of the data
   var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
