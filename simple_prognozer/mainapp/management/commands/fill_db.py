@@ -8,6 +8,7 @@ from github.MainClass import Github
 from contextlib import closing
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from simple_prognozer.secret_keys import TOKEN
 from mainapp.models import TimeSeries, Country, Subdivision, MainTable
@@ -64,7 +65,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """ Запись Daily_Reports в таблицу MainTable """
-
 
         print('Filling MainTable...')
 
@@ -148,7 +148,8 @@ class Command(BaseCommand):
                 lat_index, long_index, start_date_index, \
                 type_data = TS_PARAMS[ts_type_data[1]]
 
-                models_instances = []
+                models_create_instances = []
+                models_update_instances = []
 
                 print('Filling TimeSeries...')
                 # перебираем данные построчно
@@ -184,7 +185,7 @@ class Command(BaseCommand):
                     )
 
                     # если страна и subdivision не None
-                    if country and subdivision:
+                    if country:
                         # берем только даты из заголовков
                         dates = headers[start_date_index:]
                         # перебираем строку
@@ -202,7 +203,7 @@ class Command(BaseCommand):
                             # если мы обрабатываем первые 2 таблицы confirmed
                             if confirmed_table < 3:
                                 # создаем экземпляр и добавляем в список
-                                models_instances.append(
+                                models_create_instances.append(
                                     TimeSeries(
                                         country=country,
                                         subdivision=subdivision,
@@ -213,25 +214,39 @@ class Command(BaseCommand):
                             # иначе мы обрабатываем deaths или recovered
                             else:
                                 # получаем из бд запись
-                                event = TimeSeries.objects.get(
-                                    country=country,
-                                    subdivision=subdivision,
-                                    last_update=last_update,
-                                )
-                                # обновляем значение deaths или recovered
-                                setattr(event, type_data, record)
-                                # добавляем в список
-                                models_instances.append(event)
+                                try:
+                                    event = TimeSeries.objects.get(
+                                        country=country,
+                                        subdivision=subdivision,
+                                        last_update=last_update,
+                                    )
+                                    # обновляем значение deaths или recovered
+                                    setattr(event, type_data, record)
+                                    # добавляем в список
+                                    models_update_instances.append(event)
+                                except MultipleObjectsReturned:
+                                    break
+                                except ObjectDoesNotExist:
+                                    print(country.country, last_update, subdivision)
+                                    models_create_instances.append(
+                                        TimeSeries(
+                                            country=country,
+                                            subdivision=subdivision,
+                                            last_update=last_update,
+                                            **values
+                                        )
+                                    )
 
                 # если мы обрабатываем первые 2 таблицы confirmed
                 if confirmed_table < 3:
                     # создаем записи в таблице
-                    TimeSeries.objects.bulk_create(models_instances)
+                    TimeSeries.objects.bulk_create(models_create_instances)
                     print(f'Fill {ts_type_data[1]} done!')
                 # иначе мы обрабатываем deaths или recovered
                 else:
+                    TimeSeries.objects.bulk_create(models_create_instances)
                     # обновляем данные deaths или recovered
-                    TimeSeries.objects.bulk_update(models_instances,
+                    TimeSeries.objects.bulk_update(models_update_instances,
                                                    [type_data])
                     print(f'Fill {ts_type_data[1]} done!')
 
