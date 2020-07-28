@@ -87,6 +87,33 @@
                     {% endblock %}
                     <!--header2 end-->
 
+                    {% block cases %}
+                        <div class="cases">
+
+                            <div class="confirmed-box">
+                                <p>Confirmed:</p>
+                                <p class="confirmed">{{ confirmed }}</p>
+                            </div>
+
+                            <div class="recovered-box">
+                                <p>Recovered:</p>
+                                <p class="recovered">
+                                    {{ recovered }}</p>
+                            </div>
+
+                            <div class="deaths-box">
+                                <p>Deaths:</p>
+                                <p class="deaths">{{ deaths }}</p>
+                            </div>
+
+                            <div class="active-box">
+                                <p>Active:</p>
+                                <p class="active">{{ active }}</p>
+                            </div>
+
+                        </div>
+                    {% endblock %}
+
                     <!--chart.js start-->
                     {% block chart-js %}
                     {% endblock %}
