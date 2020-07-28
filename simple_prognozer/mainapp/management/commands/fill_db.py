@@ -9,7 +9,7 @@ from github.MainClass import Github
 import pandas as pd
 import pycountry_convert as pc
 
-from simple_prognozer.secret_keys import TOKEN
+from simple_prognozer.config import TOKEN
 
 
 REPO_PATH = 'CSSEGISandData/COVID-19'
@@ -77,7 +77,7 @@ def get_continent(country_name):
 
 
 class Command(BaseCommand):
-    help = 'Fill db'  
+    help = 'Fill db'
 
     def handle(self, *args, **kwargs):
         """ Запись Daily_Reports в таблицу MainTable """
