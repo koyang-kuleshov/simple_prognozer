@@ -32,7 +32,6 @@ def index(request):
         for day in queryset
     ]
 
-    # [{"date":"2020-01-22","list":[{"confirmed":0,"deaths":0,"recovered":0,"id":"TV"}
     covid_world_timeline = [
         {
             "date": day['last_update'].strftime('%Y-%m-%d'),
@@ -46,6 +45,7 @@ def index(request):
                 for data in
                 TimeSeries.objects.filter(last_update=day['last_update']).values('country__iso_alpha_2').
                     annotate(Sum('confirmed'), Sum('deaths'), Sum('recovered'))
+                if data['country__iso_alpha_2']
             ]
         }
         for day in queryset

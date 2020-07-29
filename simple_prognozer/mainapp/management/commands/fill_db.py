@@ -1,10 +1,3 @@
-<<<<<<<<< Temporary merge branch 1
-=========
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-from mainapp.models import TimeSeries, Country, Subdivision, MainTable, Continent
-
->>>>>>>>> Temporary merge branch 2
 import csv
 import re
 import requests
@@ -106,7 +99,6 @@ def get_continent(country_name):
         return continents['OC']
     else:
         return continents[(pc.country_alpha2_to_continent_code(pc.country_name_to_country_alpha2(country_name)))]
->>>>>>>>> Temporary merge branch 2
 
 
 class Command(BaseCommand):
@@ -303,7 +295,7 @@ class Command(BaseCommand):
         for country in all_contries:
             try:
                 Country.objects.filter(country=country['country']) \
-                    .update(iso_alpha_2=pycountry.countries.get(name=country['country']).alpha_2)
+                    .update(iso_alpha_2=pc.country_name_to_country_alpha2(country['country']))
             except:
                 pass
 

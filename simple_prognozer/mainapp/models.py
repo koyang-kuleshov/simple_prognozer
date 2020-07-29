@@ -17,7 +17,6 @@ class Country(models.Model):
                                    max_length=2,
                                    null=True
                                    )
-                               unique=True)
 
     continent = models.ForeignKey(Continent,
                                   on_delete=models.DO_NOTHING,
