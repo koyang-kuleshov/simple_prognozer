@@ -48,18 +48,49 @@ def index(request):
 
     countries = Country.objects.all()
 
+    covid_total_timeline = [
+        {
+            "confirmed": day['confirmed__sum'],
+            "deaths": day['deaths__sum'],
+            "recovered": day['recovered__sum'],
+            "date": day['last_update'].strftime('%Y-%m-%d')
+        }
+        for day in queryset
+    ]
+
+    covid_world_timeline = [
+        {
+            "date": day['last_update'].strftime('%Y-%m-%d'),
+            "list": [
+                {
+                    "confirmed": data['confirmed__sum'],
+                    "deaths": data['deaths__sum'],
+                    "recovered": data['recovered__sum'],
+                    "id": data['country__iso_alpha_2']
+                }
+                for data in
+                TimeSeries.objects.filter(last_update=day['last_update']).values('country__iso_alpha_2').
+                    annotate(Sum('confirmed'), Sum('deaths'), Sum('recovered'))
+                if data['country__iso_alpha_2']
+            ]
+        }
+        for day in queryset
+    ]
+
     context = {
         'labels': labels,
         'data_confirmed': data_confirmed,
         'data_deaths': data_deaths,
         'data_recovered': data_recovered,
         'countries': countries,
-
+        'covid_total_timeline': covid_total_timeline,
+        'covid_world_timeline': covid_world_timeline,
         'active': total_active(),
         'deaths': total_deaths(),
         'recovered': total_recovered(),
         'confirmed': total_confirmed(),
     }
+
     return render(request, 'mainapp/index.html', context)
 
 

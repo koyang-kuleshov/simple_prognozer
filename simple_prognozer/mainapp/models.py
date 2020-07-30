@@ -10,7 +10,13 @@ class Continent(models.Model):
 class Country(models.Model):
     country = models.CharField(verbose_name='Country',
                                max_length=128,
-                               unique=True)
+                               unique=True
+                               )
+    # Двухбуквенный код страны
+    iso_alpha_2 = models.CharField(verbose_name='ISO 2',
+                                   max_length=2,
+                                   null=True
+                                   )
 
     continent = models.ForeignKey(Continent,
                                   on_delete=models.DO_NOTHING,

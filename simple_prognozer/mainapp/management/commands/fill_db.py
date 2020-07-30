@@ -107,6 +107,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         """ Запись Daily_Reports в таблицу MainTable """
 
+
         print('Filling MainTable...')
 
         get_csv('daily_reports')
@@ -288,3 +289,34 @@ class Command(BaseCommand):
                     print(f'Fill {ts_type_data[1]} done!')
 
         print('Fill database done!')
+
+        print('Filling Countries ISO 2 codes...')
+        all_contries = (Country.objects.all().values('country'))
+        for country in all_contries:
+            try:
+                Country.objects.filter(country=country['country']) \
+                    .update(iso_alpha_2=pc.country_name_to_country_alpha2(country['country']))
+            except:
+                pass
+
+        Country.objects.filter(country='US').update(iso_alpha_2='US')
+        Country.objects.filter(country='Russia').update(iso_alpha_2='RU')
+        Country.objects.filter(country='Bolivia').update(iso_alpha_2='BO')
+        Country.objects.filter(country='Brunei').update(iso_alpha_2='BN')
+        Country.objects.filter(country='Burma').update(iso_alpha_2='MM')
+        Country.objects.filter(country='Congo (Kinshasa)').update(iso_alpha_2='CD')
+        Country.objects.filter(country='Congo (Brazzaville)').update(iso_alpha_2='CG')
+        Country.objects.filter(country="Cote d'Ivoire").update(iso_alpha_2='CI')
+        Country.objects.filter(country='Holy See').update(iso_alpha_2='VA')
+        Country.objects.filter(country='Iran').update(iso_alpha_2='IR')
+        Country.objects.filter(country='Korea, South').update(iso_alpha_2='KR')
+        Country.objects.filter(country='Kosovo').update(iso_alpha_2='XK')
+        Country.objects.filter(country='Laos').update(iso_alpha_2='LA')
+        Country.objects.filter(country='Moldova').update(iso_alpha_2='MD')
+        Country.objects.filter(country='Syria').update(iso_alpha_2='SY')
+        Country.objects.filter(country='Taiwan*').update(iso_alpha_2='TW')
+        Country.objects.filter(country='Tanzania').update(iso_alpha_2='TZ')
+        Country.objects.filter(country='Venezuela').update(iso_alpha_2='VE')
+        Country.objects.filter(country='Vietnam').update(iso_alpha_2='VN')
+        Country.objects.filter(country='West Bank and Gaza').update(iso_alpha_2='PS')
+        print('Fill Countries ISO 2 codes done!')
