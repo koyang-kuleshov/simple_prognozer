@@ -206,3 +206,8 @@ b, strong {
 .navbar-header {
   float: none;
 }
+
+.text {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

@@ -2713,3 +2713,29 @@ ul.p-social-link li a {
         display: block;
     }
 }
+
+.cases p {
+    font-size: 36px;
+    font-weight: 500;
+}
+
+.cases {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.confirmed {
+        color: rgb(243, 138, 130);
+}
+
+.deaths {
+    color: rgb(191, 121, 204);
+}
+
+.recovered{
+    color: rgb(237, 116, 157);
+
+}.active{
+    color: black;
+}

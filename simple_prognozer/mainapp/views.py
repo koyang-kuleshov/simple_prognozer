@@ -2,7 +2,33 @@ from django.shortcuts import render
 from django.db.models import Sum, F
 from django.shortcuts import get_object_or_404
 
-from mainapp.models import Country, TimeSeries
+from mainapp.models import Country, TimeSeries, MainTable
+
+
+def total_active(*args):
+    if args:
+        return MainTable.objects.filter(country_id=args).aggregate(Sum('active')).get('active__sum')
+    else:
+        return MainTable.objects.aggregate(Sum('active')).get('active__sum')
+
+
+def total_deaths(*args):
+    if args:
+        return MainTable.objects.filter(country_id=args).aggregate(Sum('deaths')).get('deaths__sum')
+    else:
+        return MainTable.objects.aggregate(Sum('deaths')).get('deaths__sum')
+
+
+def total_recovered(*args):
+    if args:
+        return MainTable.objects.filter(country_id=args).aggregate(Sum('recovered')).get('recovered__sum')
+    return MainTable.objects.aggregate(Sum('recovered')).get('recovered__sum')
+
+
+def total_confirmed(*args):
+    if args:
+        return MainTable.objects.filter(country_id=args).aggregate(Sum('confirmed')).get('confirmed__sum')
+    return MainTable.objects.aggregate(Sum('confirmed')).get('confirmed__sum')
 
 
 def index(request):
@@ -59,6 +85,10 @@ def index(request):
         'countries': countries,
         'covid_total_timeline': covid_total_timeline,
         'covid_world_timeline': covid_world_timeline,
+        'active': total_active(),
+        'deaths': total_deaths(),
+        'recovered': total_recovered(),
+        'confirmed': total_confirmed(),
     }
 
     return render(request, 'mainapp/index.html', context)
@@ -86,6 +116,11 @@ def country_page(request, pk):
         'country_name': country.country,
         'countries': countries,
         'chart_data': chart_data,
+
+        'active': total_active(pk),
+        'deaths': total_deaths(pk),
+        'recovered': total_recovered(pk),
+        'confirmed': total_confirmed(pk),
     }
 
     return render(request, 'mainapp/country_page.html', context)
