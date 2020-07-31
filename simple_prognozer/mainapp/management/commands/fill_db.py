@@ -159,14 +159,8 @@ class Command(BaseCommand):
         # получаем список временных рядов в репозитории
         time_series_file_list = REPO.get_contents(DR_REPO_TS_FILE_LIST)[3:]
 
-        # зададим счетчик по которму разграничим создание таблиц
-        # при обработке confirmed данных и
-        # обновление при обработке deaths и recovered данных
-        confirmed_table = 0
-
         # перебираем по одному
         for time_series_file in time_series_file_list:
-            confirmed_table += 1
             # получаем данные с помощью запроса
             print('Getting TimeSeries')
             print(time_series_file.download_url)
