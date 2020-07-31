@@ -63,6 +63,15 @@ def get_or_none(model, *args, **kwargs):
         return None
 
 
+def get_usa_data(row, index):
+    """функция возвращает знаение fips или admin2,
+    либо None при отсутствии значений"""
+    if index and row[index]:
+        return row[index]
+    else:
+        return None
+
+
 def get_continent(country_name):
     continents = {'AF': 'Africa',
                   'AS': 'Asia',
@@ -197,17 +206,9 @@ class Command(BaseCommand):
 
                     # если есть fips, преобразуем его в int
                     # если нет то None
-                    if fips_index and row[fips_index]:
-                        fips = int(float(row[fips_index]))
-                    else:
-                        fips = None
-
-                    # если есть admin2_index, берем значение
-                    # если нет то None
-                    if admin2_index:
-                        admin2 = row[admin2_index]
-                    else:
-                        admin2 = None
+                    fips = get_usa_data(row, fips_index)
+                    fips = int(float(fips)) if fips else None
+                    admin2 = get_usa_data(row, admin2_index)
 
                     # получаем subdivision или None
                     subdivision = get_or_none(
@@ -216,13 +217,9 @@ class Command(BaseCommand):
                         subdivision=row[subdivision_index],
                         fips=fips,
                         admin2=admin2,
-                        # China Hebei с разными lat и longitude
-                        # в разных таблицах
-                        # lat=row[lat_index],
-                        # longitude=row[long_index]
                     )
 
-                    # если страна и subdivision не None
+                    # если страна не None
                     if country:
                         # берем только даты из заголовков
                         dates = headers[start_date_index:]
@@ -239,7 +236,7 @@ class Command(BaseCommand):
                             # и значением показателя за этот день
                             values = dict.fromkeys([type_data], record)
                             # если мы обрабатываем первые 2 таблицы confirmed
-                            if confirmed_table < 3:
+                            if 'confirmed' in ts_type_data[1]:
                                 # создаем экземпляр и добавляем в список
                                 models_create_instances.append(
                                     TimeSeries(
@@ -275,7 +272,7 @@ class Command(BaseCommand):
                                     )
 
                 # если мы обрабатываем первые 2 таблицы confirmed
-                if confirmed_table < 3:
+                if 'confirmed' in ts_type_data[1]:
                     # создаем записи в таблице
                     TimeSeries.objects.bulk_create(models_create_instances)
                     print(f'Fill {ts_type_data[1]} done!')
