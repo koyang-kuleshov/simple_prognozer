@@ -177,6 +177,11 @@ class Command(BaseCommand):
                 # собираем заголовки в отдельный список
                 headers = next(reader)
 
+                # берем только даты из заголовков
+                dates = [current_tz.localize(datetime.strptime(date,
+                                                               '%m/%d/%y'))
+                         for date in headers[start_date_index:]]
+
                 # парсим нахвание файла в url что бы понять
                 # к какому типу данных отностится таблица и
                 # является глобальной или USA
@@ -215,15 +220,12 @@ class Command(BaseCommand):
 
                     # если страна не None
                     if country:
-                        # берем только даты из заголовков
-                        dates = headers[start_date_index:]
+
                         # перебираем строку
                         for num, record in enumerate(row[start_date_index:]):
                             # преобразуем запись из таблицы в datetime
                             # и добавляем зону для корректной записи в БД
-                            last_update = current_tz.localize(
-                                datetime.strptime(dates[num], '%m/%d/%y')
-                            )
+                            last_update = dates[num]
 
                             # создадим словарь с ключем в зависимости
                             # от типа таблицы (confirmed, deaths, recovered)
