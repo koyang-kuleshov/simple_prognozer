@@ -220,21 +220,22 @@ class Command(BaseCommand):
 
                     # если страна не None
                     if country:
-                        if 'confirmed' in type_data:
-                            models_create_instances = []
-                            # перебираем строку
-                            for num, record in enumerate(row[start_date_index:]):
-                                # преобразуем запись из таблицы в datetime
-                                # и добавляем зону для корректной записи в БД
-                                last_update = dates[num]
 
-                                # создадим словарь с ключем в зависимости
-                                # от типа таблицы (confirmed, deaths, recovered)
-                                # и значением показателя за этот день
-                                values = dict.fromkeys([type_data], record)
-                                # если мы обрабатываем первые 2 таблицы confirmed
+                        models_create_instances = []
+                        models_update_instances = []
+                        # перебираем строку
+                        for num, record in enumerate(row[start_date_index:]):
+                            # преобразуем запись из таблицы в datetime
+                            # и добавляем зону для корректной записи в БД
+                            last_update = dates[num]
 
-                                # создаем экземпляр и добавляем в список
+                            # создадим словарь с ключем в зависимости
+                            # от типа таблицы (confirmed, deaths, recovered)
+                            # и значением показателя за этот день
+                            values = dict.fromkeys([type_data], record)
+                            # если мы обрабатываем первые 2 таблицы confirmed
+                            if 'confirmed' in type_data:
+                            # создаем экземпляр и добавляем в список
                                 models_create_instances.append(
                                     TimeSeries(
                                         country=country,
@@ -243,17 +244,7 @@ class Command(BaseCommand):
                                         **values
                                     )
                                 )
-                            TimeSeries.objects.bulk_create(
-                                models_create_instances)
-                        # иначе мы обрабатываем deaths или recovered
-                        else:
-                            models_create_instances = []
-                            models_update_instances = []
-
-                            for num, record in enumerate(row[start_date_index:]):
-                                last_update = dates[num]
-                                values = dict.fromkeys([type_data], record)
-                                # получаем из бд запись
+                            else:
                                 try:
                                     event = TimeSeries.objects.get(
                                         country=country,
@@ -275,10 +266,11 @@ class Command(BaseCommand):
                                             **values
                                         )
                                     )
-                            TimeSeries.objects.bulk_create(models_create_instances)
-                            # обновляем данные deaths или recovered
-                            TimeSeries.objects.bulk_update(models_update_instances,
-                                                           [type_data])
+
+                        TimeSeries.objects.bulk_create(models_create_instances)
+                        # обновляем данные deaths или recovered
+                        TimeSeries.objects.bulk_update(models_update_instances,
+                                                       [type_data])
                 print(f'Fill {ts_type_data[1]} done!')
 
         print('Fill database done!')
