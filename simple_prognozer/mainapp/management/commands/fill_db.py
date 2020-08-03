@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from mainapp.models import TimeSeries, Country, Subdivision, MainTable, Continent
-from simple_prognozer.secret_keys import TOKEN
+from simple_prognozer.config import TOKEN
 
 
 REPO_PATH = 'CSSEGISandData/COVID-19'
@@ -114,47 +114,48 @@ class Command(BaseCommand):
     help = 'Fill db'
 
     def handle(self, *args, **kwargs):
-        # """ Запись Daily_Reports в таблицу MainTable """
-        #
-        # print('Filling MainTable...')
-        #
-        # get_csv('daily_reports')
-        # with open('daily_report.csv', 'r') as f:
-        #     reader = csv.reader(f)
-        #     next(reader)
-        #     for row in reader:
-        #         continent, _ = Continent.objects.get_or_create(continent=get_continent(row[3]))
-        #
-        #         country, _ = Country.objects.get_or_create(country=row[3], continent=continent)
-        #
-        #         subdivision, _ = Subdivision.objects.\
-        #             get_or_create(country=country,
-        #                           subdivision=row[2] or None,
-        #                           fips=row[0] or None,
-        #                           admin2=row[1] or None,
-        #                           defaults={
-        #                             'lat': row[5] or None,
-        #                             'longitude': row[6] or None
-        #                           }
-        #                           )
-        #
-        #         main, _ = MainTable.\
-        #             objects.update_or_create(
-        #                 country=country,
-        #                 subdivision=subdivision,
-        #                 defaults={'confirmed': row[7],
-        #                           'deaths': row[8],
-        #                           'recovered': row[9],
-        #                           'active': row[10] or None,
-        #                           'last_update': row[4],
-        #                           'incidence_rate': row[12] or None,
-        #                           'case_fatality_ratio': row[13] or None
-        #                           }
-        #                     )
-        # print('MainTable fill done!')
+        """ Запись Daily_Reports в таблицу MainTable """
 
-        # очистка таблицы
-        TimeSeries.objects.all().delete()
+        print('Filling MainTable...')
+
+        get_csv('daily_reports')
+        with open('daily_report.csv', 'r') as f:
+            reader = csv.reader(f)
+            next(reader)
+            for row in reader:
+                continent, _ = Continent.objects.get_or_create(continent=get_continent(row[3]))
+
+                country, _ = Country.objects.get_or_create(country=row[3], continent=continent)
+
+                subdivision, _ = Subdivision.objects.\
+                    get_or_create(country=country,
+                                  subdivision=row[2] or None,
+                                  fips=row[0] or None,
+                                  admin2=row[1] or None,
+                                  defaults={
+                                    'lat': row[5] or None,
+                                    'longitude': row[6] or None
+                                  }
+                                  )
+
+                main, _ = MainTable.\
+                    objects.update_or_create(
+                        country=country,
+                        subdivision=subdivision,
+                        defaults={'confirmed': row[7],
+                                  'deaths': row[8],
+                                  'recovered': row[9],
+                                  'active': row[10] or None,
+                                  'last_update': row[4],
+                                  'incidence_rate': row[12] or None,
+                                  'case_fatality_ratio': row[13] or None
+                                  }
+                            )
+        print('MainTable fill done!')
+
+        # если таблица уже заполнялась, получим последнюю дату
+        # если не заполнялась то None
+        last_date = TimeSeries.objects.order_by('-last_update').first().last_update
 
         # получаем список временных рядов в репозитории
         time_series_file_list = REPO.get_contents(DR_REPO_TS_FILE_LIST)[3:]
@@ -177,9 +178,6 @@ class Command(BaseCommand):
                 # собираем заголовки в отдельный список
                 headers = next(reader)
 
-
-
-
                 # парсим нахвание файла в url что бы понять
                 # к какому типу данных отностится таблица и
                 # является глобальной или USA
@@ -193,9 +191,17 @@ class Command(BaseCommand):
                 type_data = TS_PARAMS[ts_type_data[1]]
 
                 # берем только даты из заголовков
-                dates = [current_tz.localize(datetime.strptime(date,
-                                                               '%m/%d/%y'))
-                         for date in headers[start_date_index:]]
+                dates = [current_tz.localize(datetime.strptime(
+                    date, '%m/%d/%y'))
+                    for date in headers[start_date_index:]]
+
+                # если в таблице уже есть данные, находим даты в списке
+                # dates которых не хватает в бд и пересоздаем список
+                # dates, оставляя только нехватающие даты
+                if last_date:
+                    last_date_index = dates.index(last_date) + 1
+                    dates = dates[last_date_index:]
+                    start_date_index = last_date_index + start_date_index
 
                 print('Filling TimeSeries...')
                 # перебираем данные построчно
@@ -234,8 +240,9 @@ class Command(BaseCommand):
                             # и значением показателя за этот день
                             values = dict.fromkeys([type_data], record)
                             # если мы обрабатываем первые 2 таблицы confirmed
+
                             if 'confirmed' in type_data:
-                            # создаем экземпляр и добавляем в список
+                                # создаем экземпляр и добавляем в список
                                 models_create_instances.append(
                                     TimeSeries(
                                         country=country,
@@ -244,7 +251,10 @@ class Command(BaseCommand):
                                         **values
                                     )
                                 )
+
+                            # иначе мы обрабатываем deaths или recovered
                             else:
+                                # получаем из бд запись
                                 try:
                                     event = TimeSeries.objects.get(
                                         country=country,
@@ -266,7 +276,6 @@ class Command(BaseCommand):
                                             **values
                                         )
                                     )
-
                         TimeSeries.objects.bulk_create(models_create_instances)
                         # обновляем данные deaths или recovered
                         TimeSeries.objects.bulk_update(models_update_instances,
