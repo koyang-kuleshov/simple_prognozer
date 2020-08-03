@@ -63,6 +63,15 @@ def get_or_none(model, *args, **kwargs):
         return None
 
 
+def get_usa_data(row, index):
+    """функция возвращает знаение fips или admin2,
+    либо None при отсутствии значений"""
+    if index and row[index]:
+        return row[index]
+    else:
+        return None
+
+
 def get_continent(country_name):
     continents = {'AF': 'Africa',
                   'AS': 'Asia',
@@ -145,20 +154,15 @@ class Command(BaseCommand):
                             )
         print('MainTable fill done!')
 
-        # очистка таблицы
-        TimeSeries.objects.all().delete()
+        # если таблица уже заполнялась, получим последнюю дату
+        # если не заполнялась то None
+        last_date = TimeSeries.objects.order_by('-last_update').first().last_update
 
         # получаем список временных рядов в репозитории
         time_series_file_list = REPO.get_contents(DR_REPO_TS_FILE_LIST)[3:]
 
-        # зададим счетчик по которму разграничим создание таблиц
-        # при обработке confirmed данных и
-        # обновление при обработке deaths и recovered данных
-        confirmed_table = 0
-
         # перебираем по одному
         for time_series_file in time_series_file_list:
-            confirmed_table += 1
             # получаем данные с помощью запроса
             print('Getting TimeSeries')
             print(time_series_file.download_url)
@@ -187,8 +191,18 @@ class Command(BaseCommand):
                 lat_index, long_index, start_date_index, \
                 type_data = TS_PARAMS[ts_type_data[1]]
 
-                models_create_instances = []
-                models_update_instances = []
+                # берем только даты из заголовков
+                dates = [current_tz.localize(datetime.strptime(
+                    date, '%m/%d/%y'))
+                    for date in headers[start_date_index:]]
+
+                # если в таблице уже есть данные, находим даты в списке
+                # dates которых не хватает в бд и пересоздаем список
+                # dates, оставляя только нехватающие даты
+                if last_date:
+                    last_date_index = dates.index(last_date) + 1
+                    dates = dates[last_date_index:]
+                    start_date_index = last_date_index + start_date_index
 
                 print('Filling TimeSeries...')
                 # перебираем данные построчно
@@ -198,17 +212,9 @@ class Command(BaseCommand):
 
                     # если есть fips, преобразуем его в int
                     # если нет то None
-                    if fips_index and row[fips_index]:
-                        fips = int(float(row[fips_index]))
-                    else:
-                        fips = None
-
-                    # если есть admin2_index, берем значение
-                    # если нет то None
-                    if admin2_index:
-                        admin2 = row[admin2_index]
-                    else:
-                        admin2 = None
+                    fips = get_usa_data(row, fips_index)
+                    fips = int(float(fips)) if fips else None
+                    admin2 = get_usa_data(row, admin2_index)
 
                     # получаем subdivision или None
                     subdivision = get_or_none(
@@ -217,30 +223,26 @@ class Command(BaseCommand):
                         subdivision=row[subdivision_index],
                         fips=fips,
                         admin2=admin2,
-                        # China Hebei с разными lat и longitude
-                        # в разных таблицах
-                        # lat=row[lat_index],
-                        # longitude=row[long_index]
                     )
 
-                    # если страна и subdivision не None
+                    # если страна не None
                     if country:
-                        # берем только даты из заголовков
-                        dates = headers[start_date_index:]
+
+                        models_create_instances = []
+                        models_update_instances = []
                         # перебираем строку
                         for num, record in enumerate(row[start_date_index:]):
                             # преобразуем запись из таблицы в datetime
                             # и добавляем зону для корректной записи в БД
-                            last_update = current_tz.localize(
-                                datetime.strptime(dates[num], '%m/%d/%y')
-                            )
+                            last_update = dates[num]
 
                             # создадим словарь с ключем в зависимости
                             # от типа таблицы (confirmed, deaths, recovered)
                             # и значением показателя за этот день
                             values = dict.fromkeys([type_data], record)
                             # если мы обрабатываем первые 2 таблицы confirmed
-                            if confirmed_table < 3:
+
+                            if 'confirmed' in type_data:
                                 # создаем экземпляр и добавляем в список
                                 models_create_instances.append(
                                     TimeSeries(
@@ -250,6 +252,7 @@ class Command(BaseCommand):
                                         **values
                                     )
                                 )
+
                             # иначе мы обрабатываем deaths или recovered
                             else:
                                 # получаем из бд запись
@@ -274,19 +277,11 @@ class Command(BaseCommand):
                                             **values
                                         )
                                     )
-
-                # если мы обрабатываем первые 2 таблицы confirmed
-                if confirmed_table < 3:
-                    # создаем записи в таблице
-                    TimeSeries.objects.bulk_create(models_create_instances)
-                    print(f'Fill {ts_type_data[1]} done!')
-                # иначе мы обрабатываем deaths или recovered
-                else:
-                    TimeSeries.objects.bulk_create(models_create_instances)
-                    # обновляем данные deaths или recovered
-                    TimeSeries.objects.bulk_update(models_update_instances,
-                                                   [type_data])
-                    print(f'Fill {ts_type_data[1]} done!')
+                        TimeSeries.objects.bulk_create(models_create_instances)
+                        # обновляем данные deaths или recovered
+                        TimeSeries.objects.bulk_update(models_update_instances,
+                                                       [type_data])
+                print(f'Fill {ts_type_data[1]} done!')
 
         print('Fill database done!')
 
